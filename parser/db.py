@@ -4,8 +4,7 @@ import os
 import sqlite3
 
 
-def init_db():
-    db_file = "aura.db"
+def init_db(db_file):
     if not os.path.exists(db_file):
         with open(db_file, 'w'): pass
 

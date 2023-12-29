@@ -8,7 +8,8 @@ from parser.db import init_db
 
 
 def init_app():
-    init_db()
+    db_file = "aura.db"
+    init_db(db_file)
 
     dpg.create_context()
 
@@ -19,6 +20,8 @@ def init_app():
     timeout = 1
     try:
         requests.head("http://www.google.com/", timeout=timeout)
+
+        # TODO: add a Aura server check. needs to be a paid user
 
         # Create a thread for recognizing speech
         sr = SpeechRecognitionApp()

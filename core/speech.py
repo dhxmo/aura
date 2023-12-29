@@ -3,6 +3,8 @@ import os
 import speech_recognition as sr
 from playsound import playsound
 
+from .aura import initiate_aura
+
 
 class SpeechRecognitionApp:
     def __init__(self):
@@ -36,6 +38,8 @@ class SpeechRecognitionApp:
                         elif self.active:
                             print(f"Recognized text: {text}")
                             playsound(self.recognize_command_sound)
+
+                            initiate_aura(text)
 
                     except Exception as e:
                         print(f"Error occurred: {e}")
