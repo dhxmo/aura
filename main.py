@@ -1,4 +1,5 @@
 import threading
+import tkinter as tk
 
 import dearpygui.dearpygui as dpg
 import requests
@@ -11,10 +12,9 @@ def init_app():
     db_file = "aura.db"
     init_db(db_file)
 
-    dpg.create_context()
-
-    dpg.create_viewport(title='Aura', width=100, height=100)
-    dpg.setup_dearpygui()
+    root = tk.Tk()
+    root.title('Aura')
+    root.geometry('100x100')
 
     # Check internet connection
     timeout = 1
@@ -33,9 +33,7 @@ def init_app():
         with dpg.window(label="Error"):
             dpg.add_text("The internet connection is down. Please reconnect and restart this app")
 
-    dpg.show_viewport()
-    dpg.start_dearpygui()
-    dpg.destroy_context()
+    root.mainloop()
 
 
 if __name__ == '__main__':
