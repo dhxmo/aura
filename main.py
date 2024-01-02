@@ -1,7 +1,5 @@
 import threading
 import tkinter as tk
-
-import dearpygui.dearpygui as dpg
 import requests
 
 from core.speech import SpeechRecognitionApp
@@ -29,9 +27,10 @@ def init_app():
         speech_thread.start()
 
     except requests.ConnectionError:
+        print("The internet connection is down. Please reconnect and restart this app")
         # Display error message in DearPyGUI viewport
-        with dpg.window(label="Error"):
-            dpg.add_text("The internet connection is down. Please reconnect and restart this app")
+        # with dpg.window(label="Error"):
+        #     dpg.add_text("The internet connection is down. Please reconnect and restart this app")
 
     root.mainloop()
 

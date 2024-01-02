@@ -1,7 +1,7 @@
 import os
 
 import speech_recognition as sr
-from playsound import playsound
+# from playsound import playsound
 
 from .aura import initiate_aura
 
@@ -29,15 +29,15 @@ class SpeechRecognitionApp:
 
                         if 'activate voice' in text and not self.active:
                             self.active = True
-                            playsound(self.activate_voice_sound)
+                            # playsound(self.activate_voice_sound)
 
                         elif 'deactivate voice' in text and self.active:
                             self.active = False
-                            playsound(self.deactivate_voice_sound)
+                            # playsound(self.deactivate_voice_sound)
 
                         elif self.active:
                             print(f"Recognized text: {text}")
-                            playsound(self.recognize_command_sound)
+                            # playsound(self.recognize_command_sound)
 
                             initiate_aura(text)
 
