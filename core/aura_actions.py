@@ -1,14 +1,12 @@
 import math
 import platform
 import time
-
+import pygetwindow as gw
 import pyautogui
 
 
 def search(text):
     if platform.system() == "Windows":
-        pyautogui.press("win")
-    elif platform.system() == "Linux":
         pyautogui.press("win")
     else:
         # Press and release Command and Space separately
@@ -23,6 +21,15 @@ def search(text):
         pyautogui.write(char)
 
     pyautogui.press("enter")
+    
+    time.sleep(1)
+    
+    # Get the window that was opened
+    window = gw.getWindowsWithTitle(text)[0]
+   
+    # Maximize the window
+    window.maximize()
+   
     return "Open program: " + text
 
 
