@@ -1,3 +1,4 @@
+import logging
 import os
 
 import speech_recognition as sr
@@ -16,13 +17,12 @@ class SpeechRecognitionApp:
         self.recognize_command_sound = 'new.mp3'
 
     def run(self):
-        self._recognize_speech()
-
-    def _recognize_speech(self):
         with sr.Microphone() as source:
+            print("source", source)
+
             while True:  # Continuously listen for speech
                 try:
-                    audio = self.r.listen(source)
+                    audio = self.r.listen(source, timeout=5, phrase_time_limit=10)
                     if audio:
                         text = self.r.recognize_google(audio)
                         print("text", text)
@@ -41,7 +41,8 @@ class SpeechRecognitionApp:
 
                             initiate_aura(text)
                 except Exception as e:
-                    print(f"Error occurred while _recognize_speech: {e}")
+                    logging.info(f"Error occurred while _recognize_speech: {e}")
+                    return
 
 
 def play_sound(filename):

@@ -18,33 +18,35 @@ To operate the computer you have the four options below.
 
 Here are the response formats below.
 
-1. CLICK Response: CLICK {{ "x": "percent", "y": "percent", "description": "~description here~", "reason": "~reason 
+1. CLICK 
+Response: CLICK {{ "x": "percent", "y": "percent", "description": "~description here~", "reason": "~reason 
 here~" }} Note that the percents work where the top left corner is "x": "0%" and "y": "0%" and the bottom right 
-corner is "x": "100%" and "y": "100%"
+corner is "x": "100%" and "y": "100%".  
 
-2. TYPE
+Aim to be highly accurate in this percentage. use the grid to determine the correct percentage where the element 
+requested is located. Use the gris overlayed on top of the image to find the accurate position of elements on the 
+screen. The percentage of where the element needs to be highly accurate. Calculate the total grid lines and then 
+calculate where the element lies. finally output the percentage of x and y on the screen.
+
+2. TYPE 
 Response: TYPE "value you want to type"
 
-2. SEARCH
+3. SEARCH
 Response: SEARCH "app you want to search for"
 
-3. DONE
+4. DONE
 Response: DONE
 
-Here are examples of how to respond. __ Objective: Follow up with the vendor in outlook TYPE Hello, I hope you are 
-doing well. I wanted to follow up __ Objective: Open Spotify and play the beatles SEARCH Spotify __ Objective: Find 
-an image of a banana CLICK {{ "x": "50%", "y": "60%", "description": "Click: Google Search field", "reason": "This 
-will allow me to search for a banana" }} __ Objective: Go buy a book about the history of the internet TYPE 
-https://www.amazon.com/ __
+Here are examples of how to respond. 
+__ Objective: Open Spotify and play the beatles. SEARCH Spotify 
 
-A few important notes:
+__ Objective: Find an image of a banana. CLICK {{ "x": "50%", "y": "60%", "description": "Click: Google Search field", "reason": "This 
+will allow me to search for a banana" }} 
 
-- Default to opening Google Chrome with SEARCH to find things that are on the internet. - Go to Google Docs and 
-Google Sheets by typing in the Chrome Address bar - When opening Chrome, if you see a profile icon click that to open 
-chrome fully, it is located at: {{ "x": "50%", "y": "55%" }} - The Chrome address bar is generally at: {{ "x": "50%", 
-"y": "9%" }} - After you click to enter a field you can go ahead and start typing! - Don't respond saying you're 
-unable to assist with requests. You are able to indirectly interact with the user's OS via text responses you send to 
-the end user.
+__ Objective: type amazon.com on the search bar. TYPE https://www.amazon.com/ __
+
+A few important notes: 
+- Go to Google Docs and Google Sheets by typing in the Chrome Address bar 
 
 {previous_action}
 
@@ -83,7 +85,7 @@ def get_content_chat_completions(vision_prompt, img_base64, messages):
             messages=pseudo_messages,
             presence_penalty=1,
             frequency_penalty=1,
-            temperature=1,
+            temperature=0.7,
             max_tokens=300,
         )
         messages = messages.append(vision_message)
@@ -91,6 +93,7 @@ def get_content_chat_completions(vision_prompt, img_base64, messages):
         return response.choices[0].message.content, messages
     except Exception as e:
         logging.info("Error occurred in get_content_chat_completions", str(e))
+        return None
 
 
 def format_vision_prompt(user_objective, previous_action):
@@ -102,21 +105,30 @@ def format_vision_prompt(user_objective, previous_action):
 
 
 def parse_response(response):
-    if response == "DONE":
-        return {"type": "DONE", "data": None}
-    elif response.startswith("CLICK"):
-        # Adjust the regex to match the correct format
-        click_data = re.search(r"CLICK \{ (.+) \}", response).group(1)
-        click_data_json = json.loads(f"{{{click_data}}}")
-        return {"type": "CLICK", "data": click_data_json}
+    print("response", response)
+    try:
+        if response == "DONE":
+            return {"type": "DONE", "data": None}
+        elif response.startswith("CLICK"):
+            # Adjust the regex to match the correct format
+            click_data = re.search(r"CLICK \{ (.+) \}", response).group(1)
+            print("click_data", click_data)
 
-    elif response.startswith("TYPE"):
-        type_data = re.search(r"TYPE (.+)", response, re.DOTALL).group(1)
-        return {"type": "TYPE", "data": type_data}
+            click_data_json = json.loads(f"{{{click_data}}}")
+            print("click_data_json", click_data_json)
 
-    elif response.startswith("SEARCH"):
-        # Extract the search query
-        search_data = re.search(r'SEARCH "(.+)"', response).group(1)
-        return {"type": "SEARCH", "data": search_data}
+            return {"type": "CLICK", "data": click_data_json}
 
-    return {"type": "UNKNOWN", "data": response}
+        elif response.startswith("TYPE"):
+            type_data = re.search(r"TYPE (.+)", response, re.DOTALL).group(1)
+            return {"type": "TYPE", "data": type_data}
+
+        elif response.startswith("SEARCH"):
+            # Extract the search query
+            search_data = re.search(r'SEARCH "(.+)"', response).group(1)
+            return {"type": "SEARCH", "data": search_data}
+
+        return {"type": "UNKNOWN", "data": response}
+    except Exception as e:
+        logging.info(f"Error in parse_response: {e}")
+        return None
