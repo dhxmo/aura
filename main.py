@@ -2,22 +2,19 @@ import threading
 import tkinter as tk
 import requests
 
-from core.speech import SpeechRecognitionApp
-from parser.db import init_db
+from core.speech_recognition import SpeechRecognitionApp
+from parser.config import Config
 
 
 def init_app():
-    db_file = "aura.db"
-    init_db(db_file)
-
     root = tk.Tk()
     root.title('Aura')
-    root.geometry('100x100')
+    root.geometry('500x250')
 
     # Check internet connection
-    timeout = 1
+
     try:
-        requests.head("http://www.google.com/", timeout=timeout)
+        requests.head("http://www.google.com/", timeout=Config.timeout)
 
         # TODO: add a Aura server check. needs to be a paid user
 

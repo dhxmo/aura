@@ -11,7 +11,6 @@ class SpeechRecognitionApp:
         self.active = False
         self.r = sr.Recognizer()
 
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         self.activate_voice_sound = 'start.mp3'
         self.deactivate_voice_sound = 'end.mp3'
         self.recognize_command_sound = 'new.mp3'
@@ -22,10 +21,11 @@ class SpeechRecognitionApp:
     def _recognize_speech(self):
         with sr.Microphone() as source:
             while True:  # Continuously listen for speech
-                audio = self.r.listen(source)
-                if audio:
-                    try:
+                try:
+                    audio = self.r.listen(source)
+                    if audio:
                         text = self.r.recognize_google(audio)
+                        print("text", text)
 
                         if 'activate voice' in text and not self.active:
                             self.active = True
@@ -33,16 +33,15 @@ class SpeechRecognitionApp:
 
                         elif 'deactivate voice' in text and self.active:
                             self.active = False
-                            # playsound(self.deactivate_voice_sound)
+                            play_sound(self.deactivate_voice_sound)
 
                         elif self.active:
                             print(f"Recognized text: {text}")
-                            # playsound(self.recognize_command_sound)
+                            play_sound(self.recognize_command_sound)
 
                             initiate_aura(text)
-
-                    except Exception as e:
-                        print(f"Error occurred: {e}")
+                except Exception as e:
+                    print(f"Error occurred: {e}")
 
 
 def play_sound(filename):

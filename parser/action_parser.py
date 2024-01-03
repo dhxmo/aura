@@ -1,94 +1,96 @@
-import logging
-import sqlite3
-
 from openai import OpenAI
 
-from .db import create_assistant_id
-from .openai_api import OpenAIAPIClient, fetch_thread_msgs
 from .config import Config
 
 
-def action_parse(payload, db_file):
-    openai_client = OpenAIAPIClient(client=OpenAI(api_key=Config.OPENAI_API_KEY))
+VISION_PROMPT = """
+From looking at the screen and the objective your goal is to take action asked by the user in user_objective.
 
-    try:
-        conn = sqlite3.connect(db_file)
-        c = conn.cursor()
+To operate the computer you have the four options below.
 
-        # Fetch the first row from the table
-        c.execute("SELECT * FROM assistants LIMIT 1")
-        user = c.fetchone()
+1. CLICK - Move mouse and click
+2. TYPE - Type on the keyboard
+3. SEARCH - Search for a program and open it
+4. DONE - Job has been completed
 
-        if user:
-            if user['assistant_id'] is not None and user['thread_id'] is not None:
-                parser_assistant_id = user['assistant_id']
-                parser_thread_id = user['thread_id']
-                parser_run = openai_client.submit_message(assistant_id=parser_assistant_id,
-                                                          thread_id=parser_thread_id,
-                                                          user_message=payload)
-            else:
-                # create assistant
-                parser_assistant_id = openai_client.get_assistant(parser_custom_instruction).id
-                parser_thread_id, parser_run = openai_client.create_thread_and_run(assistant_id=parser_assistant_id,
-                                                                                   user_input=payload)
+Here are the response formats below.
 
-                create_assistant_id(user_id=user["user_id"],
-                                    assistant_id=parser_assistant_id,
-                                    thread_id=parser_thread_id)
+1. CLICK Response: CLICK {{ "x": "percent", "y": "percent", "description": "~description here~", "reason": "~reason 
+here~" }} Note that the percents work where the top left corner is "x": "0%" and "y": "0%" and the bottom right 
+corner is "x": "100%" and "y": "100%"
 
-            text = fetch_thread_msgs(openai_client=openai_client,
-                                     run=parser_run,
-                                     thread_id=parser_thread_id)
-            return text
-    except Exception as e:
-        logging.info("Error occurred while parser: ", str(e))
+2. TYPE
+Response: TYPE "value you want to type"
 
+2. SEARCH
+Response: SEARCH "app you want to search for"
 
-parser_custom_instruction = """You have to parse a user request. The user wants to interact with the browser and you 
-must help them. They want to either 'search', 'open', 'read_out_links', 'link_click', 'switch_to_tab', 
-'stop_playback', 'close_current_tab', 'close_current_window', 'list_open_tabs', 'navigate_back', 'navigate_forward', 
-'scroll', 'read_page_content' or 'clarify' in the browser. You must figure out 3 things. One, what action they want 
-to perform.
+3. DONE
+Response: DONE
 
-        If action to be performed is 'search' then: Two, what the user wants to search for,
-        Three, what kind of search it is (available output options are : 'web_search', 'image', 'video', 
-        'map', 'directions', and 'music'). If user mentions search: then they will mention what they want to search, 
-        that becomes the detectedKeyword
+Here are examples of how to respond. __ Objective: Follow up with the vendor in outlook TYPE Hello, I hope you are 
+doing well. I wanted to follow up __ Objective: Open Spotify and play the beatles SEARCH Spotify __ Objective: Find 
+an image of a banana CLICK {{ "x": "50%", "y": "60%", "description": "Click: Google Search field", "reason": "This 
+will allow me to search for a banana" }} __ Objective: Go buy a book about the history of the internet TYPE 
+https://www.amazon.com/ __
 
-        If action to be performed is 'open' then: Two, which webpage user wants to open. Only return webpage and 
-        .com/.org etc searchType is empty string for 'open'.
+A few important notes:
+
+- Default to opening Google Chrome with SEARCH to find things that are on the internet. - Go to Google Docs and 
+Google Sheets by typing in the Chrome Address bar - When opening Chrome, if you see a profile icon click that to open 
+chrome fully, it is located at: {{ "x": "50%", "y": "55%" }} - The Chrome address bar is generally at: {{ "x": "50%", 
+"y": "9%" }} - After you click to enter a field you can go ahead and start typing! - Don't respond saying you're 
+unable to assist with requests. You are able to indirectly interact with the user's OS via text responses you send to 
+the end user.
+
+{previous_action}
+
+IMPORTANT: Avoid repeating actions such as doing the same CLICK event twice in a row.
+
+User Objective: {user_objective}
+"""
 
 
-        If action to be performed is 'link_click' then: Two, which link user wants to click on or open up. This 
-        becomes the detectedKeyword. searchType is empty string for link_click. 
+def create_openai_client():
+    client = OpenAI()
+    client.api_key = Config.OPENAI_API_KEY
+    return client
 
-        If action to be performed is 'switch_to_tab' then: Two, which tab user wants to open up. This becomes the 
-        detectedKeyword. searchType is empty string for switch_to_tab.
 
-        If action to be performed is 'read_out_links', 'clarify', 'stop_playback', 'navigate_back', 'navigate_forward', 
-        'close_current_window', or 'close_current_tab' then: detectedKeyword and searchType 
-        are empty strings.
+def get_content_chat_completions(vision_prompt, img_base64, messages):
+    vision_message = {
+        "role": "user",
+        "content": [
+            {"type": "text", "text": vision_prompt},
+            {
+                "type": "image_url",
+                "image_url": {"url": f"data:image/jpeg;base64,{img_base64}"},
+            },
+        ],
+    }
 
-        If action to be performed is 'scroll' then: Two, which direction user wants to scroll in (up, down, top, bottom). 
-        This becomes the detectedKeyword. searchType is empty string for scroll. 
+    # create a copy of messages and save to pseudo_messages
+    pseudo_messages = messages.copy()
+    pseudo_messages.append(vision_message)
 
-        IF a user wants to know what tabs are open right now, the action is 'list_open_tabs' then: detectedKeyword and 
-        searchType are empty strings.
+    client = create_openai_client()
+    response = client.chat.completions.create(
+        model="gpt-4-vision-preview",
+        messages=pseudo_messages,
+        presence_penalty=1,
+        frequency_penalty=1,
+        temperature=1,
+        max_tokens=300,
+    )
+    messages = messages.append(vision_message)
 
-        IF a user wants to read the contents of the page or know whats on the page, the action is 'read_page_content' 
-        then: detectedKeyword and searchType are empty strings.
+    return response.choices[0].message.content, messages
 
-        The output response will be of this format if there is only ne request in the user message:
-        command='search', detectedKeyword='what user wants to search', searchType='web_search',
-        command='open', detectedKeyword='amazon.com', searchType='',
-        command='read_out_links', detectedKeyword='', searchType='',
-        command='link_click', detectedKeyword='which element user wants to interact with', searchType='',
-        command='scroll', detectedKeyword='up', searchType='',
-        command='switch_to_tab', detectedKeyword='which tab user wants to open up', searchType='' or
-        command='read_page_content', detectedKeyword='', searchType=''
-        command='clarify', detectedKeyword='', searchType=''
 
-        Output response will be one word for command and searchType, and detectedKeyword is what the user wants to 
-        search for. Be precise. The answers need to be highly accurate. Stick to this output format religiously. The 
-        user input might be in many different languages, but the output must always be in English, in the specific 
-        output format."""
+def format_vision_prompt(user_objective, previous_action):
+    if previous_action:
+        previous_action = f"Here was the previous action you took: {previous_action}"
+    else:
+        previous_action = ""
+    prompt = VISION_PROMPT.format(user_objective=user_objective, previous_action=previous_action)
+    return prompt

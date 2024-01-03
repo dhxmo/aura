@@ -1,7 +1,10 @@
+import base64
+import json
 import os
-import pyautogui
-from PIL import Image, ImageDraw
-from concurrent.futures import ThreadPoolExecutor
+import re
+
+from .screen_capture import capture_screenshot, get_last_assistant_message
+from parser.action_parser import get_content_chat_completions, format_vision_prompt
 
 
 def initiate_aura(user_objective):
@@ -24,57 +27,29 @@ def initiate_aura(user_objective):
     grid_screenshot_filename = os.path.join(screenshots_dir, "grid_screenshot.png")
 
     # capture current screen
-    capture_screenshot(screenshot_filename=screenshot_filename,
-                       grid_screenshot_filename=grid_screenshot_filename)
+    is_screenshot = capture_screenshot(screenshot_filename=screenshot_filename,
+                                       grid_screenshot_filename=grid_screenshot_filename)
 
+    if is_screenshot:
+        # get last response from assistant
+        previous_action = get_last_assistant_message(messages)
 
-def capture_screenshot(screenshot_filename, grid_screenshot_filename):
-    # Capture the screenshot of the current window
-    screenshot = pyautogui.screenshot()
+        with open(grid_screenshot_filename, "rb") as img_file:
+            img_base64 = base64.b64encode(img_file.read()).decode("utf-8")
 
-    # Save the screenshot to a file
-    screenshot.save(screenshot_filename)
+            # add to prompt as the last action so there is reference of what needs to happen next
+            vision_prompt = format_vision_prompt(user_objective=user_objective, previous_action=previous_action)
+            content, messages = get_content_chat_completions(vision_prompt=vision_prompt,
+                                                             img_base64=img_base64,
+                                                             messages=messages)
+            print("content", content)
+            print("messages", messages)
 
-    # create new image with grid overlay
-    add_grid_to_image(screenshot_filename, grid_screenshot_filename, grid_interval=7)
+            if content.startswith("CLICK"):
+                click_data = re.search(r"CLICK \{ (.+) \}", content).group(1)
+                click_data_json = json.loads(f"{{{click_data}}}")
+                prev_x = click_data_json["x"]
+                prev_y = click_data_json["y"]
 
-
-def add_grid_to_image(original_image_path, new_image_path, grid_interval):
-    # Load the image
-    image = Image.open(original_image_path)
-
-    # Create a drawing object
-    draw = ImageDraw.Draw(image)
-
-    # Get the image size
-    width, height = image.size
-
-    # Use a ThreadPoolExecutor to draw the vertical and horizontal lines in parallel
-    with ThreadPoolExecutor(max_workers=2) as executor:
-        executor.submit(draw_vertical_lines, draw, width, height, grid_interval)
-        executor.submit(draw_horizontal_lines, draw, width, height, grid_interval)
-
-    # Save the image with the grid
-    image.save(new_image_path)
-
-
-def draw_vertical_lines(draw, width, height, interval):
-    for x in range(interval, width, interval):
-        line = ((x, 0), (x, height))
-        draw.line(line, fill="blue")
-
-
-def draw_horizontal_lines(draw, width, height, interval):
-    for y in range(interval, height, interval):
-        line = ((0, y), (width, y))
-        draw.line(line, fill="blue")
-
-
-def get_last_assistant_message(messages):
-    for index in reversed(range(len(messages))):
-        if messages[index]["role"] == "assistant":
-            if index == 0:  # Check if the assistant message is the first in the array
-                return None
-            else:
-                return messages[index]
-    return None  # Return None if no assistant message is found
+                print("prev_x", prev_x)
+                print("prev_y", prev_y)
