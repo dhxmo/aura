@@ -5,9 +5,13 @@ import requests
 
 from core.speech_recognition import SpeechRecognitionApp
 from parser.config import Config
+from parser.db import init_db
 
 
 def init_app():
+    db_file = "aura.db"
+    init_db(db_file)
+
     root = tk.Tk()
     root.title('Aura')
     root.geometry('500x250')

@@ -4,7 +4,7 @@ import os
 import speech_recognition as sr
 from playsound import playsound
 
-from .aura import initiate_aura
+from .aura import init_aura
 
 
 class SpeechRecognitionApp:
@@ -39,7 +39,8 @@ class SpeechRecognitionApp:
                             print(f"Recognized text: {text}")
                             play_sound(self.recognize_command_sound)
 
-                            initiate_aura(text)
+                            # initiate_aura(text)
+                            init_aura(text)
                 except Exception as e:
                     logging.info(f"Error occurred while _recognize_speech: {e}")
                     return
