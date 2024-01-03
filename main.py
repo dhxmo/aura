@@ -1,6 +1,8 @@
+import os
 import threading
 import tkinter as tk
 import requests
+from PIL import ImageTk, Image
 
 from core.speech_recognition import SpeechRecognitionApp
 from parser.config import Config
@@ -10,8 +12,14 @@ def init_app():
     root = tk.Tk()
     root.title('Aura')
     root.geometry('500x250')
+    root.configure(background='black')
 
-    # Check internet connection
+    # Load an image using PIL
+    logo_image = Image.open(os.path.join(os.getcwd(), 'assets', 'logo', 'logo.png'))
+    photo_image = ImageTk.PhotoImage(logo_image)
+    label1 = tk.Label(image=photo_image)
+    label1.image = photo_image
+    label1.place(x=0, y=0)
 
     try:
         requests.head("http://www.google.com/", timeout=Config.timeout)
@@ -28,10 +36,8 @@ def init_app():
         speech_thread.start()
 
     except requests.ConnectionError:
+        # TODO: write these on screen and add text to speech
         print("The internet connection is down. Please reconnect and restart this app")
-        # Display error message in DearPyGUI viewport
-        # with dpg.window(label="Error"):
-        #     dpg.add_text("The internet connection is down. Please reconnect and restart this app")
 
     root.mainloop()
 

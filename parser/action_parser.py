@@ -1,7 +1,10 @@
+import json
+import logging
+import re
+
 from openai import OpenAI
 
 from .config import Config
-
 
 VISION_PROMPT = """
 From looking at the screen and the objective your goal is to take action asked by the user in user_objective.
@@ -73,18 +76,21 @@ def get_content_chat_completions(vision_prompt, img_base64, messages):
     pseudo_messages = messages.copy()
     pseudo_messages.append(vision_message)
 
-    client = create_openai_client()
-    response = client.chat.completions.create(
-        model="gpt-4-vision-preview",
-        messages=pseudo_messages,
-        presence_penalty=1,
-        frequency_penalty=1,
-        temperature=1,
-        max_tokens=300,
-    )
-    messages = messages.append(vision_message)
+    try:
+        client = create_openai_client()
+        response = client.chat.completions.create(
+            model="gpt-4-vision-preview",
+            messages=pseudo_messages,
+            presence_penalty=1,
+            frequency_penalty=1,
+            temperature=1,
+            max_tokens=300,
+        )
+        messages = messages.append(vision_message)
 
-    return response.choices[0].message.content, messages
+        return response.choices[0].message.content, messages
+    except Exception as e:
+        logging.info("Error occurred in get_content_chat_completions", str(e))
 
 
 def format_vision_prompt(user_objective, previous_action):
@@ -92,5 +98,25 @@ def format_vision_prompt(user_objective, previous_action):
         previous_action = f"Here was the previous action you took: {previous_action}"
     else:
         previous_action = ""
-    prompt = VISION_PROMPT.format(user_objective=user_objective, previous_action=previous_action)
-    return prompt
+    return VISION_PROMPT.format(user_objective=user_objective, previous_action=previous_action)
+
+
+def parse_response(response):
+    if response == "DONE":
+        return {"type": "DONE", "data": None}
+    elif response.startswith("CLICK"):
+        # Adjust the regex to match the correct format
+        click_data = re.search(r"CLICK \{ (.+) \}", response).group(1)
+        click_data_json = json.loads(f"{{{click_data}}}")
+        return {"type": "CLICK", "data": click_data_json}
+
+    elif response.startswith("TYPE"):
+        type_data = re.search(r"TYPE (.+)", response, re.DOTALL).group(1)
+        return {"type": "TYPE", "data": type_data}
+
+    elif response.startswith("SEARCH"):
+        # Extract the search query
+        search_data = re.search(r'SEARCH "(.+)"', response).group(1)
+        return {"type": "SEARCH", "data": search_data}
+
+    return {"type": "UNKNOWN", "data": response}

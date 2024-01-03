@@ -41,7 +41,7 @@ class SpeechRecognitionApp:
 
                             initiate_aura(text)
                 except Exception as e:
-                    print(f"Error occurred: {e}")
+                    print(f"Error occurred while _recognize_speech: {e}")
 
 
 def play_sound(filename):

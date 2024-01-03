@@ -3,8 +3,9 @@ import json
 import os
 import re
 
+from .aura_actions import search
 from .screen_capture import capture_screenshot, get_last_assistant_message
-from parser.action_parser import get_content_chat_completions, format_vision_prompt
+from parser.action_parser import get_content_chat_completions, format_vision_prompt, parse_response
 
 
 def initiate_aura(user_objective):
@@ -45,11 +46,33 @@ def initiate_aura(user_objective):
             print("content", content)
             print("messages", messages)
 
-            if content.startswith("CLICK"):
-                click_data = re.search(r"CLICK \{ (.+) \}", content).group(1)
-                click_data_json = json.loads(f"{{{click_data}}}")
-                prev_x = click_data_json["x"]
-                prev_y = click_data_json["y"]
+            action = parse_response(response=content)
+            action_type = action.get("type")
+            action_detail = action.get("data")
 
-                print("prev_x", prev_x)
-                print("prev_y", prev_y)
+            action_response = ''
+            if action_type == "SEARCH":
+                action_response = search(action_detail)
+            elif action_type == "TYPE":
+                # action_response = keyboard_type(action_detail)
+                pass
+            elif action_type == "CLICK":
+                # action_response = mouse_click(action_detail)
+                pass
+
+            message = {
+                "role": "assistant",
+                "content": action_response,
+            }
+            messages.append(message)
+
+            print("messages", messages)
+
+            # if content.startswith("CLICK"):
+            #     click_data = re.search(r"CLICK \{ (.+) \}", content).group(1)
+            #     click_data_json = json.loads(f"{{{click_data}}}")
+            #     prev_x = click_data_json["x"]
+            #     prev_y = click_data_json["y"]
+            #
+            #     print("prev_x", prev_x)
+            #     print("prev_y", prev_y)
