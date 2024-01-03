@@ -1,7 +1,7 @@
 import os
 
 import speech_recognition as sr
-# from playsound import playsound
+from playsound import playsound
 
 from .aura import initiate_aura
 
@@ -12,9 +12,9 @@ class SpeechRecognitionApp:
         self.r = sr.Recognizer()
 
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.activate_voice_sound = os.path.join(base_dir, 'assets/audio/start.ogg')
-        self.deactivate_voice_sound = os.path.join(base_dir, 'assets/audio/end.ogg')
-        self.recognize_command_sound = os.path.join(base_dir, 'assets/audio/new.ogg')
+        self.activate_voice_sound = 'start.mp3'
+        self.deactivate_voice_sound = 'end.mp3'
+        self.recognize_command_sound = 'new.mp3'
 
     def run(self):
         self._recognize_speech()
@@ -29,7 +29,7 @@ class SpeechRecognitionApp:
 
                         if 'activate voice' in text and not self.active:
                             self.active = True
-                            # playsound(self.activate_voice_sound)
+                            play_sound(self.activate_voice_sound)
 
                         elif 'deactivate voice' in text and self.active:
                             self.active = False
@@ -43,3 +43,9 @@ class SpeechRecognitionApp:
 
                     except Exception as e:
                         print(f"Error occurred: {e}")
+
+
+def play_sound(filename):
+    current_dir = os.getcwd()
+    file_path = os.path.join(current_dir, 'assets', 'audio', filename)
+    playsound(file_path)

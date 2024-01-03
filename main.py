@@ -21,6 +21,10 @@ def init_app():
 
         # TODO: add a Aura server check. needs to be a paid user
 
+        # TODO: check user. only allow one session per email
+
+        # TODO: check for updates mechanism
+
         # Create a thread for recognizing speech
         sr = SpeechRecognitionApp()
         speech_thread = threading.Thread(target=sr.run)

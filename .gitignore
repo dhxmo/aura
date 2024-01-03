@@ -164,6 +164,7 @@ cython_debug/
 .DS_Store
 
 # Avoid sending testing screenshots up
+screenshots
 screenshot.png
 screenshot_with_grid.png
 screenshot_with_labeled_grid.png
