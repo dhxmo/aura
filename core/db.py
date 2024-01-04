@@ -3,6 +3,8 @@ import logging
 import os
 import sqlite3
 
+from core.config import Config
+
 
 def init_db(db_file):
     if not os.path.exists(db_file):
@@ -31,12 +33,12 @@ def init_db(db_file):
             conn.commit()
             conn.close()
     except Exception as e:
-        logging.info("Error occurred while init_db: ", str(e))
+        print("Error occurred while init_db: ", str(e))
 
 
-def create_assistant_id(user_id, assistant_id, thread_id, db_file):
+def create_assistant_id(user_id, assistant_id, thread_id):
     try:
-        conn = sqlite3.connect(db_file)
+        conn = sqlite3.connect(Config.db_file)
         c = conn.cursor()
 
         # Update the existing row
@@ -46,4 +48,4 @@ def create_assistant_id(user_id, assistant_id, thread_id, db_file):
         conn.commit()
         conn.close()
     except Exception as e:
-        logging.info("Error occurred while create_user: ", str(e))
+        print("Error occurred while create_user: ", str(e))

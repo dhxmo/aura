@@ -8,8 +8,7 @@ from core.db import init_db
 
 
 def init_app():
-    db_file = "aura.db"
-    init_db(db_file)
+    init_db(Config.db_file)
 
     root = tk.Tk()
     root.title('Aura')
