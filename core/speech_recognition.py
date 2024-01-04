@@ -21,9 +21,9 @@ class AuraSpeechRecognition:
             print("source", source)
 
             while True:  # Continuously listen for speech
-                try:
-                    audio = self.r.listen(source, timeout=5, phrase_time_limit=10)
-                    if audio:
+                audio = self.r.listen(source, timeout=5, phrase_time_limit=10)
+                if audio:
+                    try:
                         text = self.r.recognize_google(audio)
                         print("text", text)
 
@@ -40,11 +40,8 @@ class AuraSpeechRecognition:
                             play_sound(self.recognize_command_sound)
 
                             init_aura(text)
-                except Exception as e:
-                    print(f"Error occurred while _recognize_speech: {e}")
-                    return
-
-
+                    except sr.UnknownValueError:
+                        print("Google Speech Recognition could not understand the audio")
 def play_sound(filename):
     current_dir = os.getcwd()
     file_path = os.path.join(current_dir, 'assets', 'audio', filename)

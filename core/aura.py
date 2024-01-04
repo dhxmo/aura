@@ -4,7 +4,7 @@ from engine.runner import runner
 
 
 def init_aura(text):
-    intent = parser(payload=text, db_file=Config.db_file)
-    print("parser response", intent)
+    # intent = parser(payload=text, db_file=Config.db_file)
+    intent = "command='search', detected_keyword='google chrome'"
 
     runner(intent)
