@@ -17,7 +17,7 @@ class AuraSpeechRecognition:
         self.deactivate_voice_sound = 'end.mp3'
         self.recognize_command_sound = 'new.mp3'
 
-    def run(self):
+    def run(self, driver):
         with sr.Microphone() as source:
             play_sound(self.ready_sound)
 
@@ -40,7 +40,7 @@ class AuraSpeechRecognition:
                             print(f"Recognized text: {text}")
                             play_sound(self.recognize_command_sound)
 
-                            init_aura(text=text)
+                            init_aura(text=text, driver=driver)
                     except sr.UnknownValueError:
                         print("Google Speech Recognition could not understand the audio")
 def play_sound(filename):

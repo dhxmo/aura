@@ -1,90 +1,65 @@
 import os
 import time
-import webbrowser
 import pyautogui
 
-def browser_actions(detected_keyword, flag):
-    chrome_path = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
-    webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(chrome_path))
-
+def browser_actions(driver, detected_keyword, flag):
     if flag=='web_search':
         url = f"https://www.google.com/search?q={detected_keyword}"
     elif flag=='web_browse':
         url = detected_keyword
     elif flag=='web_shop':
-        url = f"https://www.amazon.com/s?k={'detected_keyword'}"
+        url = f"https://www.amazon.com/s?k={detected_keyword}"
 
-    webbrowser.get('chrome').open_new_tab(url)
+    driver.get(url)
 
-def navigate(navigation_type):
-    current_dir = os.getcwd()
 
-    if navigation_type=='back':
-        button_screenshot = os.path.join(current_dir, 'assets', 'chrome', 'chrome-back.png')
+def navigate(driver, navigation_type):
+    if navigation_type == 'back':
+        driver.back()
     elif navigation_type=='forward':
-        button_screenshot = os.path.join(current_dir, 'assets', 'chrome', 'chrome-forward.png')
+        driver.forward()
 
-    location = pyautogui.locateOnScreen(button_screenshot)
-
-    if location is not None:
-        # Click the center of the located region
-        pyautogui.click(location[0] + location[2] // 2, location[1] + location[3] // 2)
-    else:
-        print("Button not found.")
-
-def scroll(scroll_type):
-    current_dir = os.getcwd()
-
+def scroll(driver, scroll_type):
     if scroll_type == 'up':
-        button_screenshot = os.path.join(current_dir, 'assets', 'chrome', 'scroll-up.png')
+        driver.execute_script("window.scrollBy(0, -250)")
     elif scroll_type == 'down':
-        button_screenshot = os.path.join(current_dir, 'assets', 'chrome', 'scroll-down.png')
+        driver.execute_script("window.scrollBy(0, 250)")
+    elif scroll_type == 'top':
+        driver.execute_script("window.scrollTo(0, 0)")
+    elif scroll_type == 'bottom':
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
 
-    location = pyautogui.locateOnScreen(button_screenshot)
 
-    if location is not None:
-        # Move the mouse to the center of the located region
-        pyautogui.moveTo(location[0] + location[2] // 2, location[1] + location[3] // 2)
-
-        # Press the mouse button down
-        pyautogui.mouseDown()
-
-        # Wait for a while (simulate a long press)
-        time.sleep(1)
-
-        # Release the mouse button
-        pyautogui.mouseUp()
-    else:
-        print("Button not found.")
-
-def tab(action_type):
-    current_dir = os.getcwd()
-
+def tab(driver, action_type):
     if action_type == 'new':
-        button_screenshot = os.path.join(current_dir, 'assets', 'chrome', 'tab-new.png')
+        driver.execute_script("window.open('');")
+
+        # Get a list of all window handles
+        all_handles = driver.window_handles
+
+        # Switch to the last handle (which should be the new tab)
+        driver.switch_to.window(all_handles[-1])
     elif action_type == 'close':
-        button_screenshot = os.path.join(current_dir, 'assets', 'chrome', 'tab-close.png')
+        driver.execute_script("window.close();")
 
-    location = pyautogui.locateOnScreen(button_screenshot)
 
-    if location is not None:
-        # Click the center of the located region
-        pyautogui.click(location[0] + location[2] // 2, location[1] + location[3] // 2)
-    else:
-        print("Button not found.")
+def window(driver, action_type):
+   if action_type == 'minimize':
+       # Get the current window handle
+       current_handle = driver.current_window_handle
 
-def window(action_type):
-    current_dir = os.getcwd()
+       # Get a list of all window handles
+       all_handles = driver.window_handles
 
-    if action_type == 'minimize':
-        button_screenshot = os.path.join(current_dir, 'assets', 'chrome', 'window-minimize.png')
-    elif action_type == 'close':
-        button_screenshot = os.path.join(current_dir, 'assets', 'chrome', 'window-close.png')
-
-    location = pyautogui.locateOnScreen(button_screenshot)
-
-    if location is not None:
-        # Click the center of the located region
-        pyautogui.click(location[0] + location[2] // 2, location[1] + location[3] // 2)
-    else:
-        print("Button not found.")
+       # Check if the current window handle is in the list of all window handles
+       if current_handle in all_handles:
+           driver.minimize_window()
+       else:
+           print("Window does not exist.")
+   elif action_type == 'close':
+       current_handle = driver.current_window_handle
+       all_handles = driver.window_handles
+       if current_handle in all_handles:
+           driver.quit()
+       else:
+           print("Window does not exist.")

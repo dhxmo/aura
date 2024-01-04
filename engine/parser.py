@@ -50,8 +50,8 @@ def parser(payload, db_file):
 # TODO: update db everytime updates to this
 parser_custom_instruction = """You have to parse a user request. The user wants to interact with the computer and you 
 must help them. They want to either 'computer_search', 'web_search', 'web_browse', 'web_shop', 'navigate_forward', 
-'navigate_back', 'scroll_up', 'scroll_down', 'new_tab', 'close_tab', 'minimize_window', 'close_window' 
-or 'clarify' in the computer. 
+'navigate_back', 'scroll_up', 'scroll_down', 'scroll_top', 'scroll_bottom', 'new_tab', 'close_tab', 'minimize_window', 
+'close_window' or 'clarify' in the computer. 
 
 You must figure out 2 things. One, what action they want to perform. Two, what the user wants to search for. 
 
@@ -59,7 +59,7 @@ If user mentions computer_search: then they will mention what they want to searc
 If user mentions web_search: then they will mention what they want to search, that becomes the detected_keyword
 If user mentions web_shop: then there will be mention of what they would like to buy, that becomes the detected_keyword
 If user mentions web_browse: then there will be mention of which site they want to site, that becomes the detected_keyword
-If user mentions navigate_forward or navigate_back, scroll_up or scroll_down, new_tab, close_tab, 
+If user mentions navigate_forward or navigate_back, scroll_up or scroll_down, scroll_top, scroll_bottom, new_tab, close_tab, 
 minimize_window, close_window : then the detected_keyword will be empty
 the detected_keyword for web_browse will be of the format: 'https://www.<site-name>.com/'
 

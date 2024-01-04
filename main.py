@@ -13,7 +13,7 @@ def init_app():
 
     root = tk.Tk()
     root.title('Aura')
-    root.geometry('1000x250')
+    root.geometry('1000x500')
 
     aura_vocab_title = "Aura Vocab"
     aura_vocab_text = """
@@ -31,6 +31,8 @@ def init_app():
     To browse to a specific site, say "browse to google.com"
     To shop for something on amazon, say "Shop for underwears"
     To scroll down a page on chrome, say "Scroll down on Chrome"
+    To open new tab or close current tab, say "Open new tab on the browser"
+    To minimize or close browser window, say "Close browser window"
     """
     label = tk.Label(root, text=aura_vocab_text)
     label.pack()
@@ -56,8 +58,11 @@ def init_app():
 
 
 def worker():
+    # Create a new instance of the Firefox driver
+    driver = webdriver.Firefox()
+
     sr = AuraSpeechRecognition()
-    sr.run()
+    sr.run(driver)
 
 if __name__ == '__main__':
     init_app()

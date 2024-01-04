@@ -1,7 +1,7 @@
 from intents.browser_actions import browser_actions, navigate, scroll, window, tab
 from intents.computer_search import computer_search
 
-def runner(intent):
+def runner(intent, driver):
     print("intent", intent)
 
     intent_list = intent.split(",")
@@ -12,35 +12,41 @@ def runner(intent):
             computer_search(intent_dict['detected_keyword'])
             return
         case 'web_search':
-            browser_actions(detected_keyword=intent_dict['detected_keyword'], flag='web_search')
+            browser_actions(driver=driver, detected_keyword=intent_dict['detected_keyword'], flag='web_search')
             return
         case 'web_browse':
-            browser_actions(detected_keyword=intent_dict['detected_keyword'], flag='web_browse')
+            browser_actions(driver=driver, detected_keyword=intent_dict['detected_keyword'], flag='web_browse')
             return
         case 'web_shop':
-            browser_actions(detected_keyword=intent_dict['detected_keyword'], flag='web_shop')
+            browser_actions(driver=driver, detected_keyword=intent_dict['detected_keyword'], flag='web_shop')
             return
         case 'navigate_forward':
-            navigate(navigation_type='forward')
+            navigate(driver=driver, navigation_type='forward')
             return
         case 'navigate_back':
-            navigate(navigation_type='back')
+            navigate(driver=driver, navigation_type='back')
             return
         case 'scroll_up':
-            scroll(scroll_type='up')
+            scroll(driver=driver, scroll_type='up')
             return
         case 'scroll_down':
-            scroll(scroll_type='down')
+            scroll(driver=driver, scroll_type='down')
+            return
+        case 'scroll_top':
+            scroll(driver=driver, scroll_type='top')
+            return
+        case 'scroll_bottom':
+            scroll(driver=driver, scroll_type='bottom')
             return
         case 'new_tab':
-            tab(action_type='new')
+            tab(driver=driver, action_type='new')
             return
         case 'close_tab':
-            tab(action_type='close')
+            tab(driver=driver, action_type='close')
             return
         case 'minimize_window':
-            window(action_type='minimize')
+            window(driver=driver, action_type='minimize')
             return
         case 'close_window':
-            window(action_type='close')
+            window(driver=driver, action_type='close')
             return
