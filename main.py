@@ -19,11 +19,18 @@ def init_app():
     aura_vocab_text = """
     Please ensure you have the latest version of Chrome downloaded. It should be located at 
     C:\Program Files\Google\Chrome\Application\chrome.exe. Aura will only work with Chrome.
+    As an additional measure, please pin Chrome to your taskbar. 
+    
+    When Aura is ready, you will hear a notification sound.
+    
+    Say "Activate Voice" to begin giving commands to Aura.
+    Say "Deactivate Voice" to deactivate Aura.
     
     To do a search on your computer, say "search for Downloads on the computer"
     To search on Google, say "search for mountains on the web"
     To browse to a specific site, say "browse to google.com"
     To shop for something on amazon, say "Shop for underwears"
+    To scroll down a page on chrome, say "Scroll down on Chrome"
     """
     label = tk.Label(root, text=aura_vocab_text)
     label.pack()
