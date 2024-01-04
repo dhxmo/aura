@@ -40,6 +40,8 @@ class AuraSpeechRecognition:
                             play_sound(self.recognize_command_sound)
 
                             init_aura(text)
+
+                            return
                     except sr.UnknownValueError:
                         print("Google Speech Recognition could not understand the audio")
 def play_sound(filename):

@@ -12,8 +12,16 @@ def init_app():
 
     root = tk.Tk()
     root.title('Aura')
-    root.geometry('500x250')
-    root.configure(background='black')
+    root.geometry('1000x250')
+
+    aura_vocab_title = "Aura Vocab"
+    aura_vocab_text = """
+    To do a search on your computer, say "search for Downloads on the computer"
+    To search teh web, say "search for mountains on the web"
+    To browse to a specific site, say "browse to google.com"
+    """
+    label = tk.Label(root, text=aura_vocab_text)
+    label.pack()
 
     try:
         requests.head("http://www.google.com/", timeout=Config.timeout)

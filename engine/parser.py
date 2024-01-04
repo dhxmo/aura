@@ -47,21 +47,29 @@ def parser(payload, db_file):
         print("Error occurred while engine: ", str(e))
 
 
-parser_custom_instruction = """You have to parse a user request. The user wants to interact with the browser and you 
-must help them. They want to either 'search' or 'clarify' in the computer. 
-You must figure out 2 things. One, what action they want to perform.
+# TODO: update db everytime updates to this
+parser_custom_instruction = """You have to parse a user request. The user wants to interact with the computer and you 
+must help them. They want to either 'computer_search', 'web_search', 'web_browse', 'web_shop' or 'clarify' in the computer. 
 
-        If action to be performed is 'search' then: Two, what the user wants to search for. If user mentions 
-        search: then they will mention what they want to search, that becomes the detected_keyword
+You must figure out 2 things. One, what action they want to perform. Two, what the user wants to search for. 
 
-        The output response will be of this format if there is only ne request in the user message:
-        command='search', detected_keyword='what user wants to search',
-        command='clarify', detected_keyword=''
+If user mentions computer_search: then they will mention what they want to search, that becomes the detected_keyword
+If user mentions web_search: then they will mention what they want to search, that becomes the detected_keyword
+If user mentions web_shop: then there will be mention of what they would like to buy, that becomes the detected_keyword
+If user mentions web_browse: then there will be mention of which site they want to site, that becomes the detected_keyword
+the detected_keyword for web_browse will be of the format: 'https://www.<site-name>.com/'
 
-        Output response will be one word for command, and detected_keyword is what the user wants to 
-        search for. Be precise. The answers need to be highly accurate. Stick to this output format religiously. The 
-        user input might be in many different languages, but the output must always be in English, in the specific 
-        output format."""
+The output response will be of this format if there is only ne request in the user message:
+command='computer_search', detected_keyword='what user wants to search for on the computer' or
+command='web_search', detected_keyword='what user wants to search for on the web' or
+command='web_shop', detected_keyword='what the user wants to shop for' or
+command='web_browse', detected_keyword='site user wants to browse to' or
+command='clarify', detected_keyword=''
+
+Output response will be one word for command, and detected_keyword is what the user wants to 
+search for. Be precise. The answers need to be highly accurate. Stick to this output format religiously. The 
+user input might be in many different languages, but the output must always be in English, in the specific 
+output format."""
 
 #
 # VISION_PROMPT = """
