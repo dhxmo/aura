@@ -1,12 +1,6 @@
 from intents.computer_search import computer_search
-from intents.web_browse import web_browse
-from intents.web_search import web_search
-from intents.web_shop import web_shop
 
-
-def runner(intent):
-    print("intent", intent)
-
+def runner(driver, intent):
     intent_list = intent.split(",")
     intent_dict = {elem.split("=")[0].strip():elem.split("=")[1].strip("'") for elem in intent_list}
 
@@ -15,11 +9,13 @@ def runner(intent):
             computer_search(intent_dict['detected_keyword'])
             return
         case 'web_search':
-            web_search(intent_dict['detected_keyword'])
+            url = f"https://www.google.com/search?q={intent_dict['detected_keyword']}"
+            driver.get(url)
             return
         case 'web_browse':
-            web_browse(intent_dict['detected_keyword'])
+            driver.get(intent_dict['detected_keyword'])
             return
         case 'web_shop':
-            web_shop(intent_dict['detected_keyword'])
+            url = f"https://www.amazon.com/s?k={intent_dict['detected_keyword']}"
+            driver.get(url)
             return

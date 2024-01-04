@@ -1,6 +1,7 @@
 import threading
 import tkinter as tk
 import requests
+from selenium import webdriver
 
 from core.speech_recognition import AuraSpeechRecognition
 from core.config import Config
@@ -17,8 +18,9 @@ def init_app():
     aura_vocab_title = "Aura Vocab"
     aura_vocab_text = """
     To do a search on your computer, say "search for Downloads on the computer"
-    To search teh web, say "search for mountains on the web"
+    To search on Google, say "search for mountains on the web"
     To browse to a specific site, say "browse to google.com"
+    To shop for something on amazon, say "Shop for underwears"
     """
     label = tk.Label(root, text=aura_vocab_text)
     label.pack()
@@ -41,9 +43,14 @@ def init_app():
 
     root.mainloop()
 
+
+
 def worker():
-   sr = AuraSpeechRecognition()
-   sr.run()
+    # Create a new instance of the Firefox driver
+    driver = webdriver.Firefox()
+
+    sr = AuraSpeechRecognition()
+    sr.run(driver)
 
 if __name__ == '__main__':
     init_app()
