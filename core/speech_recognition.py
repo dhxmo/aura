@@ -1,4 +1,3 @@
-import logging
 import os
 
 import speech_recognition as sr
@@ -6,11 +5,11 @@ from playsound import playsound
 
 from .aura import init_aura
 
-
-class SpeechRecognitionApp:
+class AuraSpeechRecognition:
     def __init__(self):
         self.active = False
         self.r = sr.Recognizer()
+        self.r.energy_threshold = 4000
 
         self.activate_voice_sound = 'start.mp3'
         self.deactivate_voice_sound = 'end.mp3'
@@ -39,10 +38,9 @@ class SpeechRecognitionApp:
                             print(f"Recognized text: {text}")
                             play_sound(self.recognize_command_sound)
 
-                            # initiate_aura(text)
                             init_aura(text)
                 except Exception as e:
-                    logging.info(f"Error occurred while _recognize_speech: {e}")
+                    print(f"Error occurred while _recognize_speech: {e}")
                     return
 
 

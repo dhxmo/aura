@@ -1,11 +1,10 @@
 import threading
 import tkinter as tk
-
 import requests
 
-from core.speech_recognition import SpeechRecognitionApp
-from parser.config import Config
-from parser.db import init_db
+from core.speech_recognition import AuraSpeechRecognition
+from core.config import Config
+from core.db import init_db
 
 
 def init_app():
@@ -19,25 +18,25 @@ def init_app():
 
     try:
         requests.head("http://www.google.com/", timeout=Config.timeout)
-
-        # TODO: add a Aura server check. needs to be a paid user
-
-        # TODO: check user. only allow one session per email
-
-        # TODO: check for updates mechanism
-
-        # Create a thread for recognizing speech
-        sr = SpeechRecognitionApp()
-        speech_thread = threading.Thread(target=sr.run)
-        speech_thread.start()
-        speech_thread.join()
-
     except requests.ConnectionError:
         # TODO: write these on screen and add text to speech
         print("The internet connection is down. Please reconnect and restart this app")
 
+    # TODO: add a Aura server check. needs to be a paid user
+
+    # TODO: check user. only allow one session per email
+
+    # TODO: check for updates mechanism
+
+    # Start the worker thread
+    thread = threading.Thread(target=worker)
+    thread.start()
+
     root.mainloop()
 
+def worker():
+   sr = AuraSpeechRecognition()
+   sr.run()
 
 if __name__ == '__main__':
     init_app()

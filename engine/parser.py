@@ -6,12 +6,12 @@ import sqlite3
 
 from openai import OpenAI
 
-from .db import create_assistant_id
-from .openai_api import OpenAIAPIClient, fetch_thread_msgs
-from .config import Config
+from core.db import create_assistant_id
+from core.openai_api import OpenAIAPIClient, fetch_thread_msgs
+from core.config import Config
 
 
-def action_parse(payload, db_file):
+def parser(payload, db_file):
     openai_client = OpenAIAPIClient(client=OpenAI(api_key=Config.OPENAI_API_KEY))
 
     try:
@@ -44,7 +44,7 @@ def action_parse(payload, db_file):
                                      thread_id=parser_thread_id)
             return text
     except Exception as e:
-        logging.info("Error occurred while parser: ", str(e))
+        logging.info("Error occurred while engine: ", str(e))
 
 
 parser_custom_instruction = """You have to parse a user request. The user wants to interact with the browser and you 

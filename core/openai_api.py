@@ -10,7 +10,7 @@ class OpenAIAPIClient:
 
     def get_assistant(self, custom_instruction):
         parser_assistant = self.client.beta.assistants.create(
-            name="browse-with-voice parser",
+            name="browse-with-voice engine",
             instructions=custom_instruction,
             model="gpt-4-1106-preview"
         )
