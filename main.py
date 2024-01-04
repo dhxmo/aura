@@ -17,6 +17,9 @@ def init_app():
 
     aura_vocab_title = "Aura Vocab"
     aura_vocab_text = """
+    Please ensure you have the latest version of Chrome downloaded. It should be located at 
+    C:\Program Files\Google\Chrome\Application\chrome.exe. Aura will only work with Chrome.
+    
     To do a search on your computer, say "search for Downloads on the computer"
     To search on Google, say "search for mountains on the web"
     To browse to a specific site, say "browse to google.com"
@@ -46,11 +49,8 @@ def init_app():
 
 
 def worker():
-    # Create a new instance of the Firefox driver
-    driver = webdriver.Firefox()
-
     sr = AuraSpeechRecognition()
-    sr.run(driver)
+    sr.run()
 
 if __name__ == '__main__':
     init_app()

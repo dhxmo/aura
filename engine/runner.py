@@ -1,4 +1,4 @@
-from intents.browser_actions import browser_actions
+from intents.browser_actions import browser_actions, navigate
 from intents.computer_search import computer_search
 
 def runner(intent):
@@ -18,5 +18,10 @@ def runner(intent):
         case 'web_shop':
             browser_actions(detected_keyword=intent_dict['detected_keyword'], flag='web_shop')
             return
-
+        case 'navigate_forward':
+            navigate(navigation_type='forward')
+            return
+        case 'navigate_back':
+            navigate(navigation_type='back')
+            return
 
