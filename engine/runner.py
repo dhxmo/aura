@@ -1,5 +1,7 @@
 from intents.browser_actions import browser_actions, navigate, scroll, window, tab
 from intents.computer_search import computer_search
+from intents.find_in_explorer import find_dir_in_explorer, find_file_powershell
+
 
 def runner(intent, driver):
     print("intent", intent)
@@ -50,3 +52,12 @@ def runner(intent, driver):
         case 'close_window':
             window(driver=driver, action_type='close')
             return
+        case 'find_dir_in_explorer':
+            if intent_dict['root_directory'] == '':
+                intent_dict['root_directory'] = None
+            find_dir_in_explorer(directory=intent_dict['detected_keyword'], drive=intent_dict['root_directory'])
+            return
+        case 'find_file_in_dir':
+            if intent_dict['root_directory'] == '':
+                intent_dict['root_directory'] = None
+            find_file_powershell(name=intent_dict['detected_keyword'], directory=intent_dict['root_directory'])

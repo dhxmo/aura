@@ -1,6 +1,12 @@
 import os
 import subprocess
+import pyttsx3
 
+from intents.computer_search import computer_search
+
+# List of drives to search
+drives = ['~', 'C:\\', 'D:\\', 'E:\\', 'F:\\', 'G:\\', 'H:\\', 'I:\\', 'J:\\', 'K:\\', 'L:\\', 'M:\\', 'N:\\',
+          'O:\\', 'P:\\', 'Q:\\', 'R:\\', 'S:\\', 'T:\\', 'U:\\', 'V:\\', 'W:\\', 'X:\\', 'Y:\\', 'Z:\\']
 
 def find_directory(name, search_path):
     # Get a list of all items in the directory
@@ -14,10 +20,6 @@ def find_directory(name, search_path):
         return os.path.join(search_path, name)
 
 
-# List of drives to search
-drives = ['~', 'C:\\', 'D:\\', 'E:\\', 'F:\\', 'G:\\', 'H:\\', 'I:\\', 'J:\\', 'K:\\', 'L:\\', 'M:\\', 'N:\\',
-          'O:\\', 'P:\\', 'Q:\\', 'R:\\', 'S:\\', 'T:\\', 'U:\\', 'V:\\', 'W:\\', 'X:\\', 'Y:\\', 'Z:\\']
-
 def find_dir_in_explorer(directory, drive=None):
    if drive is None:
        for drive in drives:
@@ -25,24 +27,52 @@ def find_dir_in_explorer(directory, drive=None):
            if os.path.exists(drive_path):
                result = find_directory(directory, drive_path)
                if result is not None:
-                  return result
+                  computer_search(result)
    else:
        if os.path.exists(drive):
            result = find_directory(directory, drive)
            if result is not None:
-               return result
+               computer_search(result)
 
 
 # dir -> format C:\\
 def find_file_powershell(name, directory):
-  # Define the PowerShell command
-  command = f'(Get-ChildItem -Path {directory} -Include {name} -Recurse -ErrorAction SilentlyContinue -File).FullName'
+    if directory:
+        if os.path.exists(os.path.join(directory, name)):
+            subprocess.Popen(r'explorer /select,"{}"'.format(os.path.join(directory, name)))
+            return
 
-  # Execute the command and capture the output
-  result = subprocess.run(['powershell', '-Command', command], stdout=subprocess.PIPE, text=True)
+        # Define the PowerShell command
+        command = f'(Get-ChildItem -Path {directory} -Include {name} -Recurse -ErrorAction SilentlyContinue -File).FullName'
 
-  # Split the output into lines
-  lines = result.stdout.splitlines()
+        # Execute the command and capture the output
+        result = subprocess.run(['powershell', '-Command', command], stdout=subprocess.PIPE, text=True)
 
-  # Return the list of files
-  return lines
+        # Split the output into lines
+        lines = result.stdout.splitlines()
+
+        if len(lines) > 1:
+            # Extract the final subdirectory from each path
+            directories = [os.path.basename(line) for line in lines]
+
+            # Remove duplicates
+            directories_list = list(set(directories))
+
+            # Initialize the speech engine
+            engine = pyttsx3.init()
+
+           # Speak the directories if the length of lines is greater than 1
+            directories_str = " "
+            for directory in directories_list:
+                directories_str += directory + ", "
+
+            engine.say(f"File {name} was found in a few sub directories in {directory}. "
+                       f"Which one would you like to open from {directories}?")
+            engine.runAndWait()
+        elif len(lines) == 1:
+            subprocess.Popen(r'explorer /select,"{}"'.format(lines[0]))
+            # os.startfile(lines[0])
+        else:
+            engine = pyttsx3.init()
+            engine.say("No files were found")
+            engine.runAndWait()

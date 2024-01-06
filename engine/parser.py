@@ -51,11 +51,18 @@ def parser(payload, db_file):
 parser_custom_instruction = """You have to parse a user request. The user wants to interact with the computer and you 
 must help them. They want to either 'computer_search', 'web_search', 'web_browse', 'web_shop', 'navigate_forward', 
 'navigate_back', 'scroll_up', 'scroll_down', 'scroll_top', 'scroll_bottom', 'new_tab', 'close_tab', 'minimize_window', 
-'close_window' or 'clarify' in the computer. 
+'close_window', 'find_dir_in_explorer' or 'clarify' in the computer. 
 
 You must figure out 2 things. One, what action they want to perform. Two, what the user wants to search for. 
 
 If user mentions computer_search: then they will mention what they want to search, that becomes the detected_keyword
+If user mentions they want to find a directory on the local computer, action is 'find_dir_in_explorer': 
+then detected_keyword is the name of the directory to be found. If they mention a root directory they want to search in
+add a third response code 'root_directory'. If user doesnt mention anything, send an empty string. root_directory 
+should be in the format 'C:\\' or 'D:\\' etc. It has to be the basic drives available on a Windows computer.
+If user mentions they want to search for a specific file in a directory, action is 'find_file_in_dir':
+then detected_keyword is the name of the file in the directory. 'root_directory' becomes 'C:\\<name of directory>'
+
 If user mentions web_search: then they will mention what they want to search, that becomes the detected_keyword
 If user mentions web_shop: then there will be mention of what they would like to buy, that becomes the detected_keyword
 If user mentions web_browse: then there will be mention of which site they want to site, that becomes the detected_keyword
@@ -68,6 +75,8 @@ command='computer_search', detected_keyword='what user wants to search for on th
 command='web_search', detected_keyword='what user wants to search for on the web' or
 command='web_shop', detected_keyword='what the user wants to shop for' or
 command='web_browse', detected_keyword='site user wants to browse to' or
+command='find_dir_in_explorer', detected_keyword='directory name user wants to find on their explorer', root_directory='C:\\' or
+command='find_file_in_dir', detected_keyword='file name user wants to find in a directory', root_directory='D:\\<name of directory>\' or
 command='navigate_forward', detected_keyword='' or
 command='clarify', detected_keyword=''
 
