@@ -1,3 +1,4 @@
+import difflib
 import threading
 import time
 import tkinter as tk
@@ -75,36 +76,32 @@ def worker_speech_recognition(driver):
 
 
 def worker_cookie(driver, user_id):
-   previous_cookies = []
+   previous_cookies = load_cookies(user_id=user_id) or []
 
    while True:
        cookie_script = """return document.cookie"""
        cookies = driver.execute_script(cookie_script)
 
        if cookies:
-           current_url = """return window.location.hostname"""
-           url = driver.execute_script(current_url)
+            current_url = """return window.location.hostname"""
+            url = driver.execute_script(current_url)
 
-            # TODO: fix the logic here
-           # currently cookies getting stored individually.
-           # find a way to check if most of the cookie string is similar, dont log it.
-           # if cookie string not similar, then log it
-           parsed_cookies = parse_cookies(cookies)
-           print("parsed_cookies", parsed_cookies)
+            print("previous_cookies", previous_cookies)
 
-           for cookie_name, _ in parsed_cookies.items():
-               print("cookie_name", cookie_name)
+            # Calculate similarity with previous cookies
+            similarity = max((difflib.SequenceMatcher(None, cookies, prev_cookie).ratio()
+                              for prev_cookie in previous_cookies),
+                             default=0)
 
-               is_cookie_exists = check_cookie_exists(user_id, url, cookie_name)
-               print("is_cookie_exists", is_cookie_exists)
 
-               if not is_cookie_exists:
-                  print("adding cookie")
-                  previous_cookies.append(cookie_name)
-                  add_cookies_to_db(cookie_name, url, user_id)
-
+            if similarity < 0.1:  # Adjust this threshold as needed
+               print("adding cookie")
+               previous_cookies.append(cookies)
+               add_cookies_to_db(cookies, url, user_id)
        time.sleep(2)
 
+
+# TODO: build a thread everytime a new hostname is visited, db is checked for previous cookies and injected into browser
 
 
 def parse_cookies(cookies):
