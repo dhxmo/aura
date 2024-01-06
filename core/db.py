@@ -1,4 +1,5 @@
 import hashlib
+import json
 import logging
 import os
 import sqlite3
@@ -14,10 +15,16 @@ def init_db(db_file):
         conn = sqlite3.connect(db_file)
         c = conn.cursor()
 
-        # create a new table if nothing exists
         c.execute(
             "CREATE TABLE IF NOT EXISTS assistants (id INTEGER PRIMARY KEY, user_id TEXT, assistant_id TEXT, "
-            "thread_id TEXT)")
+            "thread_id TEXT)"
+        )
+
+        # create a new table for cookies
+        c.execute(
+            "CREATE TABLE IF NOT EXISTS cookies (id INTEGER PRIMARY KEY, user_id TEXT, name TEXT, domain TEXT,"
+            "FOREIGN KEY (user_id) REFERENCES assistants(user_id))"
+        )
 
         # select user row
         c.execute("SELECT * FROM assistants LIMIT 1")
@@ -32,6 +39,10 @@ def init_db(db_file):
 
             conn.commit()
             conn.close()
+        else:
+            user_id = user[1]
+
+        return user_id
     except Exception as e:
         print("Error occurred while init_db: ", str(e))
 
@@ -49,3 +60,64 @@ def create_assistant_id(user_id, assistant_id, thread_id):
         conn.close()
     except Exception as e:
         print("Error occurred while create_user: ", str(e))
+
+def add_cookies_to_db(cookie_name, domain, user_id):
+    print("add_cookies_to_db", cookie_name)
+
+    try:
+        conn = sqlite3.connect(Config.db_file) # Connect to the SQLite database
+        c = conn.cursor() # Create a cursor object
+
+        # Escape the cookie variable
+        escaped_cookie_name = sqlite3.Binary(cookie_name.encode())
+
+        # Insert cookies into the table
+        c.execute("INSERT INTO cookies (user_id, domain, name) VALUES (?, ?, ?)",
+                (user_id, domain, escaped_cookie_name))
+
+        # Save (commit) the changes
+        conn.commit()
+
+        # Close the connection
+        conn.close()
+    except Exception as e:
+        print("Error occurred while add_cookies_to_db: ", str(e))
+
+
+def check_cookie_exists(user_id, url, cookie_name):
+   """Check if the cookie already exists in the database. Returns True if cookie exists"""
+
+   conn = sqlite3.connect(Config.db_file)
+   c = conn.cursor()
+
+   escaped_cookie_name = sqlite3.Binary(cookie_name.encode())
+
+   c.execute("SELECT * FROM cookies WHERE user_id = ? AND domain = ? AND name = ?",
+             (user_id, url, escaped_cookie_name))
+   existing_cookie = c.fetchone()
+   conn.close()
+
+   return existing_cookie is not None
+
+
+def load_cookies(driver, user_id):
+    # load cookies. refresh every 30 days
+
+   conn = sqlite3.connect(Config.db_file) # Connect to the SQLite database
+   c = conn.cursor() # Create a cursor object
+
+   # Load cookies from the database
+   c.execute("SELECT * FROM cookies WHERE user_id = ?", (user_id,))
+   rows = c.fetchall()
+
+   for row in rows:
+       driver.add_cookie({
+           'name': row[1],
+           'value': row[2],
+           'domain': row[3],
+           'path': row[4],
+           'expiry': row[5],
+           'httpOnly': row[6],
+           'secure': row[7]
+       })
+
