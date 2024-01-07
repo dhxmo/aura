@@ -1,13 +1,17 @@
-import difflib
-import threading
-import time
+import os
+import pickle
+import queue
 import tkinter as tk
 import requests
+from concurrent.futures import ThreadPoolExecutor
+
 from selenium import webdriver
+from selenium.common.exceptions import InvalidSessionIdException, NoSuchWindowException
+from selenium_stealth import stealth
 
 from core.speech_recognition import AuraSpeechRecognition
 from core.config import Config
-from core.db import init_db, load_cookies, add_cookies_to_db, check_cookie_exists
+from core.db import init_db
 
 
 # TODO: add fail case return statements
@@ -54,62 +58,59 @@ def init_app():
     # TODO: check for updates mechanism
 
     # Create a new instance of the Firefox driver
-    # TODO: only show when needed. not on startup
-    driver = webdriver.Firefox()
-    # load_cookies(driver=driver, user_id=user_id)
+    # driver = webdriver.Firefox()
+    chrome_user_data = get_chrome_user_data_dir()
 
-    # Start the worker thread
-    # thread = threading.Thread(target=worker_speech_recognition, args=(driver,))
-    # thread.start()
+    options = webdriver.ChromeOptions()
+    options.add_argument(f"user-data-dir={chrome_user_data}")
+    options.add_argument(
+        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36")
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', False)
+    options.add_argument('--disable-blink-features=AutomationControlled')
+    driver = webdriver.Chrome(options=options)
+    stealth(driver,
+            languages=["en-US", "en"],
+            vendor="Google Inc.",
+            platform="Win32",
+            webgl_vendor="Intel Inc.",
+            renderer="Intel Iris OpenGL Engine",
+            fix_hairline=True,
+            )
+    driver.get("https://www.google.com")
 
-    # Start the worker thread
-    thread = threading.Thread(target=worker_cookie, args=(driver, user_id))
-    thread.start()
+    # Load cookies from file
+    root_dir = os.path.abspath(os.curdir)
+    filename = os.path.join(root_dir, f"cookies.pkl")
+
+    # start all threads
+    executor = worker_functions(driver, filename)
+
+    def on_close():
+        executor.shutdown(wait=False)
+        root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", on_close)
 
     root.mainloop()
 
 
+def get_chrome_user_data_dir():
+   """Returns the path to the Chrome user data directory."""
+   if os.name == 'nt': # Windows
+       return os.path.expandvars(r"%LOCALAPPDATA%\Google\Chrome\User Data")
+   else:
+       raise Exception("Unsupported operating system.")
+
+
+def worker_functions(driver):
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        executor.submit(worker_speech_recognition, driver)
+        return executor
 
 def worker_speech_recognition(driver):
     sr = AuraSpeechRecognition()
     sr.run(driver)
-
-
-def worker_cookie(driver, user_id):
-   previous_cookies = load_cookies(user_id=user_id) or []
-
-   while True:
-       cookie_script = """return document.cookie"""
-       cookies = driver.execute_script(cookie_script)
-
-       if cookies:
-            current_url = """return window.location.hostname"""
-            url = driver.execute_script(current_url)
-
-            print("previous_cookies", previous_cookies)
-
-            # Calculate similarity with previous cookies
-            similarity = max((difflib.SequenceMatcher(None, cookies, prev_cookie).ratio()
-                              for prev_cookie in previous_cookies),
-                             default=0)
-
-
-            if similarity < 0.1:  # Adjust this threshold as needed
-               print("adding cookie")
-               previous_cookies.append(cookies)
-               add_cookies_to_db(cookies, url, user_id)
-       time.sleep(2)
-
-
-# TODO: build a thread everytime a new hostname is visited, db is checked for previous cookies and injected into browser
-
-
-def parse_cookies(cookies):
-   cookie_dict = {}
-   for cookie in cookies.split(';'):
-       key, value = cookie.strip().split('=', 1)
-       cookie_dict[key] = value
-   return cookie_dict
 
 
 
