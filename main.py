@@ -31,7 +31,9 @@ def init_app():
     
     To do a search on your computer, say "search for Downloads on the computer"
     To search for any folder on your system, say "Search for Downloads" or "Search for Test directory in D: drive"
-    To search for a file mention where the file is, say "Search for untitled.txt in D drive in Test sub directory" 
+    To search for a file mention where the file is, say "Search for untitled.txt in D drive in Test sub directory"
+    To find out what images are on the screen, say "What are the images on the screen right now?"
+    To find out what is on the screen right now, say "Whats on the screen right now?"
     
     To search on Google, say "search for mountains on the web"
     To browse to a specific site, say "browse to google.com"
@@ -39,6 +41,10 @@ def init_app():
     To scroll down a page on chrome, say "Scroll down on Chrome"
     To open new tab or close current tab, say "Open new tab on the browser"
     To minimize or close browser window, say "Close browser window"
+    To find out links on the page, say "What are the links on this webpage?"
+    To click on a specific link like lets say an article from BuzzFeed, say "Link on the BuzzFeed link"  
+    
+    Pls Note: When the narration is going on, if a command is spoken, the narration will stop.
     """
 
 

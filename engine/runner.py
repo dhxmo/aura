@@ -1,9 +1,10 @@
-from core.utils import play_sound, maximize_window_if_not_in_focus
+from core.utils import play_sound
 from intents.browser_actions import browser_actions, navigate, scroll, window, tab
 from intents.browser_links import summarize_links, click_link
 from intents.clarify import clarify
-from intents.computer_search import computer_search
 from intents.computer_explorer import find_dir_in_explorer, find_file_powershell
+from intents.computer_search import computer_search
+from intents.on_screen import on_screen
 
 
 def runner(intent, driver):
@@ -53,6 +54,10 @@ def runner(intent, driver):
             summarize_links(driver=driver)
         case 'click_link':
             click_link(driver=driver, link_keyword=intent_dict['detected_keyword'])
+        case 'images_on_screen':
+            on_screen(objective='images_on_screen')
+        case 'whats_on_screen':
+            on_screen(objective='whats_on_screen')
         case 'clarify':
             clarify()
 
