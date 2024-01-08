@@ -1,7 +1,5 @@
-import os
 import threading
 import tkinter as tk
-from concurrent.futures import ThreadPoolExecutor
 
 import requests
 from selenium import webdriver
@@ -9,6 +7,7 @@ from selenium_stealth import stealth
 
 from core.config import Config
 from core.db import init_db
+from core.driver_session import set_session_storage, save_session_storage, get_chrome_user_data_dir
 from core.speech_recognition import AuraSpeechRecognition
 
 
@@ -86,10 +85,15 @@ def init_app():
             fix_hairline=True,
             )
     driver.get("https://www.google.com")
+    set_session_storage(driver)
 
 
     # Start the worker thread
-    thread = threading.Thread(target=worker_speech_recognition, args=(driver,))
+    # thread = threading.Thread(target=worker_speech_recognition, args=(driver,))
+    # thread.daemon = True
+    # thread.start()
+
+    thread = threading.Thread(target=save_session_storage, args=(driver,))
     thread.daemon = True
     thread.start()
 
@@ -100,14 +104,6 @@ def init_app():
     root.protocol("WM_DELETE_WINDOW", on_close)
 
     root.mainloop()
-
-
-def get_chrome_user_data_dir():
-   """Returns the path to the Chrome user data directory."""
-   if os.name == 'nt': # Windows
-       return os.path.expandvars(r"%LOCALAPPDATA%\Google\Chrome\User Data")
-   else:
-       raise Exception("Unsupported operating system.")
 
 
 def worker_speech_recognition(driver):
