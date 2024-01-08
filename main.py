@@ -14,54 +14,56 @@ from core.speech_recognition import AuraSpeechRecognition
 
 # TODO: add fail case return statements
 # TODO: speech recog tooooo slow. fasten it up
+# TODO: add a Aura server check. needs to be a paid user
+# TODO: check user. only allow one session per email
+# TODO: check for updates mechanism
 
 def init_app():
     user_id = init_db(Config.db_file)
 
     root = tk.Tk()
     root.title('Aura')
-    root.geometry('1000x500')
+    root.geometry('1000x750')
 
-    aura_vocab_title = "Aura Vocab"
+    aura_title = "Welcome to Aura"
+    title_label = tk.Label(root, text=aura_title, font=("Helvetica", 16))
+    title_label.pack()
+
     aura_text = """
     When Aura is ready, you will hear a notification sound.
     
-    Say "Activate Voice" to begin giving commands to Aura.
-    Say "Deactivate Voice" to deactivate Aura.
+    Say "Aura activate" to begin giving commands to Aura.
+    Say "Aura deactivate" to deactivate Aura.
     
     To do a search on your computer, say "search for Downloads on the computer"
-    To search for any folder on your system, say "Search for Downloads" or "Search for Test directory in D: drive"
-    To search for a file mention where the file is, say "Search for untitled.txt in D drive in Test sub directory"
-    To find out what images are on the screen, say "What are the images on the screen right now?"
-    To find out what is on the screen right now, say "Whats on the screen right now?"
+    To search for any folder on your system, say "search for Program Files on the computer" or 
+    "Aura, search for Test directory in D: drive"
+    To search for a file mention where the file is, say "search for untitled.txt in D drive in 
+    Test sub directory"
+    To find out what images are on the screen, say "what are the images on the screen right now?"
+    To find out what is on the screen right now, say "whats on the screen right now?"
     
     To search on Google, say "search for mountains on the web"
     To browse to a specific site, say "browse to google.com"
-    To shop for something on amazon, say "Shop for headphones"
-    To scroll down a page on chrome, say "Scroll down on Chrome"
-    To open new tab or close current tab, say "Open new tab on the browser"
-    To minimize or close browser window, say "Close browser window"
-    To find out links on the page, say "What are the links on this webpage?"
-    To click on a specific link like lets say an article from BuzzFeed, say "Link on the BuzzFeed link"  
+    To shop for something on amazon, say "shop for headphones"
+    To scroll down a page on chrome, say "scroll down on Chrome"
+    To open new tab or close current tab, say "open new tab on the browser"
+    To minimize or close browser window, say "close browser window"
+    To find out links on the page, say "what are the links on this webpage?"
+    To click on a specific link like lets say an article from BuzzFeed, say "click on the BuzzFeed link"  
+    To get a summary of the amazon product on the browser, say "please summarize the amazon product 
+    on the page for me"
     
     Pls Note: When the narration is going on, if a command is spoken, the narration will stop.
     """
 
-
     try:
         requests.head("http://www.google.com/", timeout=Config.timeout)
     except requests.ConnectionError:
-        # TODO: write these on screen and add text to speech
         aura_text = "The internet connection is down. Please reconnect and restart this app"
 
-    label = tk.Label(root, text=aura_text)
-    label.pack()
-
-    # TODO: add a Aura server check. needs to be a paid user
-
-    # TODO: check user. only allow one session per email
-
-    # TODO: check for updates mechanism
+    label = tk.Label(root, text=aura_text, justify="left")
+    label.pack(padx=20, pady=20)
 
     # Create a new driver instance
     chrome_user_data = get_chrome_user_data_dir()
@@ -84,8 +86,6 @@ def init_app():
             )
     driver.get("https://www.google.com")
 
-    # start all threads
-    # worker_functions(driver, root)
 
     # Start the worker thread
     thread = threading.Thread(target=worker_speech_recognition, args=(driver,))
@@ -107,17 +107,6 @@ def get_chrome_user_data_dir():
        return os.path.expandvars(r"%LOCALAPPDATA%\Google\Chrome\User Data")
    else:
        raise Exception("Unsupported operating system.")
-
-
-# def worker_functions(driver, root):
-#     with ThreadPoolExecutor(max_workers=1) as executor:
-#         executor.submit(worker_speech_recognition, driver)
-#
-#         def on_close():
-#             executor.shutdown(wait=False)
-#             root.destroy()
-#
-#         root.protocol("WM_DELETE_WINDOW", on_close)
 
 
 def worker_speech_recognition(driver):

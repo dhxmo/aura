@@ -58,6 +58,8 @@ def runner(intent, driver):
             on_screen(objective='images_on_screen')
         case 'whats_on_screen':
             on_screen(objective='whats_on_screen')
+        case 'amazon_product_summary':
+            on_screen(objective='amazon_product_summary', driver=driver)
         case 'clarify':
             clarify()
 

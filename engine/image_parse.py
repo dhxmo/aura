@@ -4,6 +4,7 @@ from core.config import Config
 
 VISION_PROMPT = """
 User Objective: {user_objective}
+It's important to say the following to help the user who's not able to see the screen understand whats on the screen right now.
 From looking at the screen and based on the User Objective, report what you see on the screen.
 """
 

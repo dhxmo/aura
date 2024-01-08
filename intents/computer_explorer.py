@@ -2,6 +2,7 @@ import os
 import subprocess
 import pyttsx3
 
+from core.utils import read_aloud
 from intents.computer_search import computer_search
 
 # List of drives to search
@@ -58,21 +59,17 @@ def find_file_powershell(name, directory):
             # Remove duplicates
             directories_list = list(set(directories))
 
-            # Initialize the speech engine
-            engine = pyttsx3.init()
-
            # Speak the directories if the length of lines is greater than 1
             directories_str = " "
             for directory in directories_list:
                 directories_str += directory + ", "
 
-            engine.say(f"File {name} was found in a few sub directories in {directory}. "
+            res = (f"File {name} was found in a few sub directories in {directory}. "
                        f"Which one would you like to open from {directories}?")
-            engine.runAndWait()
+
+            read_aloud(res)
         elif len(lines) == 1:
             subprocess.Popen(r'explorer /select,"{}"'.format(lines[0]))
             # os.startfile(lines[0])
         else:
-            engine = pyttsx3.init()
-            engine.say("No files were found")
-            engine.runAndWait()
+            read_aloud("No files were found")
