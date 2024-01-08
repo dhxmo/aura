@@ -1,5 +1,5 @@
 from core.utils import play_sound
-from intents.browser_actions import browser_actions, navigate, scroll, window, tab
+from intents.browser_actions import browser_actions, navigate, scroll, window, tab, click_submit
 from intents.browser_links import summarize_links, click_link
 from intents.clarify import clarify
 from intents.computer_explorer import find_dir_in_explorer, find_file_powershell
@@ -60,6 +60,8 @@ def runner(intent, driver):
             on_screen(objective='whats_on_screen')
         case 'amazon_product_summary':
             on_screen(objective='amazon_product_summary', driver=driver)
+        case 'submit_form':
+            click_submit(driver)
         case 'clarify':
             clarify()
 

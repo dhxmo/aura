@@ -1,6 +1,4 @@
-import os
-import time
-import pyautogui
+from selenium.webdriver.common.by import By
 
 from core.utils import maximize_window_if_not_in_focus
 
@@ -38,6 +36,7 @@ def scroll(driver, scroll_type):
     elif scroll_type == 'bottom':
         driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
 
+    return
 
 def tab(driver, action_type):
     maximize_window_if_not_in_focus(driver)
@@ -52,6 +51,8 @@ def tab(driver, action_type):
         driver.switch_to.window(all_handles[-1])
     elif action_type == 'close':
         driver.execute_script("window.close();")
+
+    return
 
 
 def window(driver, action_type):
@@ -76,3 +77,10 @@ def window(driver, action_type):
            driver.quit()
        else:
            print("Window does not exist.")
+
+    return
+
+def click_submit(driver):
+    button = driver.find_element(By.CSS_SELECTOR, 'input[type="submit"]')
+    button.click()
+    return

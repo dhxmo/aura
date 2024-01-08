@@ -53,6 +53,7 @@ def init_app():
     To click on a specific link like lets say an article from BuzzFeed, say "click on the BuzzFeed link"  
     To get a summary of the amazon product on the browser, say "please summarize the amazon product 
     on the page for me"
+    To submit a form, say "Submit this form please"
     
     Pls Note: When the narration is going on, if a command is spoken, the narration will stop.
     """
