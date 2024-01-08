@@ -1,16 +1,14 @@
-import asyncio
-import os
-
 import speech_recognition as sr
-from playsound import playsound
 
 from .aura import init_aura
+from .utils import play_sound
+
 
 class AuraSpeechRecognition:
     def __init__(self):
         self.active = False
         self.r = sr.Recognizer()
-        self.r.energy_threshold = 4000
+        self.r.energy_threshold = 5000
 
         self.ready_sound = 'ready.mp3'
         self.activate_voice_sound = 'start.mp3'
@@ -43,7 +41,3 @@ class AuraSpeechRecognition:
                             init_aura(text=text, driver=driver)
                     except sr.UnknownValueError:
                         print("Google Speech Recognition could not understand the audio")
-def play_sound(filename):
-    current_dir = os.getcwd()
-    file_path = os.path.join(current_dir, 'assets', 'audio', filename)
-    playsound(file_path)

@@ -1,17 +1,15 @@
 import os
-import pickle
-import queue
+import threading
 import tkinter as tk
-import requests
 from concurrent.futures import ThreadPoolExecutor
 
+import requests
 from selenium import webdriver
-from selenium.common.exceptions import InvalidSessionIdException, NoSuchWindowException
 from selenium_stealth import stealth
 
-from core.speech_recognition import AuraSpeechRecognition
 from core.config import Config
 from core.db import init_db
+from core.speech_recognition import AuraSpeechRecognition
 
 
 # TODO: add fail case return statements
@@ -25,7 +23,7 @@ def init_app():
     root.geometry('1000x500')
 
     aura_vocab_title = "Aura Vocab"
-    aura_vocab_text = """
+    aura_text = """
     When Aura is ready, you will hear a notification sound.
     
     Say "Activate Voice" to begin giving commands to Aura.
@@ -42,14 +40,16 @@ def init_app():
     To open new tab or close current tab, say "Open new tab on the browser"
     To minimize or close browser window, say "Close browser window"
     """
-    label = tk.Label(root, text=aura_vocab_text)
-    label.pack()
+
 
     try:
         requests.head("http://www.google.com/", timeout=Config.timeout)
     except requests.ConnectionError:
         # TODO: write these on screen and add text to speech
-        print("The internet connection is down. Please reconnect and restart this app")
+        aura_text = "The internet connection is down. Please reconnect and restart this app"
+
+    label = tk.Label(root, text=aura_text)
+    label.pack()
 
     # TODO: add a Aura server check. needs to be a paid user
 
@@ -57,8 +57,7 @@ def init_app():
 
     # TODO: check for updates mechanism
 
-    # Create a new instance of the Firefox driver
-    # driver = webdriver.Firefox()
+    # Create a new driver instance
     chrome_user_data = get_chrome_user_data_dir()
 
     options = webdriver.ChromeOptions()
@@ -79,15 +78,15 @@ def init_app():
             )
     driver.get("https://www.google.com")
 
-    # Load cookies from file
-    root_dir = os.path.abspath(os.curdir)
-    filename = os.path.join(root_dir, f"cookies.pkl")
-
     # start all threads
-    executor = worker_functions(driver, filename)
+    # worker_functions(driver, root)
+
+    # Start the worker thread
+    thread = threading.Thread(target=worker_speech_recognition, args=(driver,))
+    thread.daemon = True
+    thread.start()
 
     def on_close():
-        executor.shutdown(wait=False)
         root.destroy()
 
     root.protocol("WM_DELETE_WINDOW", on_close)
@@ -103,15 +102,20 @@ def get_chrome_user_data_dir():
        raise Exception("Unsupported operating system.")
 
 
-def worker_functions(driver):
-    with ThreadPoolExecutor(max_workers=3) as executor:
-        executor.submit(worker_speech_recognition, driver)
-        return executor
+# def worker_functions(driver, root):
+#     with ThreadPoolExecutor(max_workers=1) as executor:
+#         executor.submit(worker_speech_recognition, driver)
+#
+#         def on_close():
+#             executor.shutdown(wait=False)
+#             root.destroy()
+#
+#         root.protocol("WM_DELETE_WINDOW", on_close)
+
 
 def worker_speech_recognition(driver):
     sr = AuraSpeechRecognition()
     sr.run(driver)
-
 
 
 if __name__ == '__main__':
