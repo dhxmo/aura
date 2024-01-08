@@ -1,6 +1,6 @@
 from core.utils import play_sound, maximize_window_if_not_in_focus
 from intents.browser_actions import browser_actions, navigate, scroll, window, tab
-from intents.browser_links import summarize_links
+from intents.browser_links import summarize_links, click_link
 from intents.clarify import clarify
 from intents.computer_search import computer_search
 from intents.computer_explorer import find_dir_in_explorer, find_file_powershell
@@ -51,6 +51,8 @@ def runner(intent, driver):
             find_file_powershell(name=intent_dict['detected_keyword'], directory=intent_dict['root_directory'])
         case 'summarize_links':
             summarize_links(driver=driver)
+        case 'click_link':
+            click_link(driver=driver, link_keyword=intent_dict['detected_keyword'])
         case 'clarify':
             clarify()
 

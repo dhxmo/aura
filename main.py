@@ -87,6 +87,7 @@ def init_app():
     thread.start()
 
     def on_close():
+        driver.quit()
         root.destroy()
 
     root.protocol("WM_DELETE_WINDOW", on_close)
