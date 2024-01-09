@@ -1,5 +1,5 @@
 from aura.core.utils import play_sound
-from aura.intents.browser_actions import browser_actions, navigate, scroll, window, tab, click_submit
+from aura.intents.browser_actions import browser_actions, navigate, scroll, window, tab, click_submit, save_bookmark
 from aura.intents.browser_links import summarize_links, click_link
 from aura.intents.clarify import clarify
 from aura.intents.computer_explorer import find_dir_in_explorer, find_file_powershell
@@ -62,6 +62,8 @@ def runner(intent, driver):
             on_screen(objective='amazon_product_summary', driver=driver)
         case 'submit_form':
             click_submit(driver)
+        case 'save_bookmark':
+            save_bookmark(driver)
         case 'clarify':
             clarify()
 

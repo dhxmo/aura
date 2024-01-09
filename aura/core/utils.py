@@ -6,8 +6,10 @@ from playsound import playsound
 from PIL import Image
 import pyttsx3
 from selenium.webdriver.common.by import By
+import pygetwindow as gw
 
 from aura.engine.image_parse import format_vision_prompt, get_content_chat_completions
+from aura.intents.browser_actions import window
 
 
 def play_sound(filename):
@@ -80,3 +82,8 @@ def read_aloud(res):
     engine = pyttsx3.init()
     engine.say(res)
     engine.runAndWait()
+
+def driver_in_focus(driver):
+    window(driver=driver, action_type='maximize')
+    current_window = gw.getWindowsWithTitle(driver.title)[0]
+    current_window.activate()

@@ -88,7 +88,7 @@ def set_session_storage(driver):
                     for key, value in session_storage.items():
                         driver.execute_script(f"window.sessionStorage.setItem('{key}', '{value}');")
         except FileNotFoundError:
-            pass
+            print("No file found in set_session_storage")
 
         # Continuously check for new webpages
         while True:
