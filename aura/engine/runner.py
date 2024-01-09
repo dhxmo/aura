@@ -5,6 +5,7 @@ from aura.intents.browser_links import summarize_links, click_link
 from aura.intents.clarify import clarify
 from aura.intents.computer_explorer import find_dir_in_explorer, find_file_powershell
 from aura.intents.computer_search import computer_search
+from aura.intents.email_actions import compose_email, touch_up_email
 from aura.intents.on_screen import on_screen
 
 
@@ -67,6 +68,10 @@ def runner(intent, driver):
             save_bookmark(driver)
         case 'open_bookmark':
             open_bookmark(driver=driver, keyword=intent_dict['detected_keyword'])
+        case 'compose_email':
+            compose_email(driver)
+        case 'touch_up_email':
+            touch_up_email(driver=driver, tone=intent_dict['detected_keyword'])
         case 'clarify':
             clarify()
 

@@ -11,7 +11,7 @@ class AuraSpeechRecognition:
     def __init__(self):
         self.active = False
         self.r = sr.Recognizer()
-        self.r.energy_threshold = 5000
+        self.r.energy_threshold = 4000
 
         self.ready_sound = 'ready.mp3'
         self.activate_voice_sound = 'start.mp3'
@@ -20,10 +20,12 @@ class AuraSpeechRecognition:
 
     def run(self, driver):
         with sr.Microphone() as source:
+            # self.r.adjust_for_ambient_noise(source)
             play_sound(self.ready_sound)
 
             while True:  # Continuously listen for speech
-                audio = self.r.listen(source, phrase_time_limit=10)
+                audio = self.r.record(source, offset=0, duration=3)
+
                 if audio:
                     try:
                         text = self.r.recognize_google(audio)

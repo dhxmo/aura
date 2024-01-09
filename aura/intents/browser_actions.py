@@ -141,7 +141,10 @@ def open_bookmark(driver, keyword):
         except NoSuchElementException:
             print("No such element found")
 def driver_in_focus(driver):
-    window(driver=driver, action_type='maximize')
-    current_window = gw.getWindowsWithTitle(driver.title)[0]
-    current_window.activate()
-    time.sleep(1)
+    try:
+        window(driver=driver, action_type='maximize')
+        current_window = gw.getWindowsWithTitle(driver.title)[0]
+        current_window.activate()
+        time.sleep(1)
+    except gw.PyGetWindowException:
+        print("error code: 0 - Operation completed successfully")

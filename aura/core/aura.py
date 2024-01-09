@@ -5,6 +5,9 @@ from aura.engine.runner import runner
 
 def init_aura(text, driver):
     # intent = parser(payload=text, db_file=Config.db_file)
-    intent = "command='open_bookmark', detected_keyword='BuzzFeed Keto'"
+    intent = "command='touch_up_email', detected_keyword='Professional'"
     runner(intent=intent, driver=driver)
     return
+
+
+# hello, hope you're well. I'd like to buy some flowers. Regards.

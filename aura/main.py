@@ -55,6 +55,8 @@ def init_app():
     To submit a form, say "Submit this form"
     To bookmark a page, say "Bookmark this page"
     To open a previously bookmarked page, say "Open the bookmark I have for BuzzFeed blog post about Keto diet" 
+    To compose a Gmail message, say "Compose an email"
+    To rewrite the mail you've composed, say "Touch up this email in a professional tone"  
     
     Pls Note: When the narration is going on, if a command is spoken, the narration will stop.
     """
@@ -86,7 +88,8 @@ def init_app():
             renderer="Intel Iris OpenGL Engine",
             fix_hairline=True,
             )
-    driver.get("https://www.google.com")
+    # driver.get("https://www.google.com")
+    driver.get("https://mail.google.com/mail/u/0/#drafts?compose=CllgCHrjDTQPwCkNFMfgJsLFzPzHfTrjVsDSdvvkmKQGSnhhxCtVRBFsspzFBQrbfSjzTNWdZGV")
 
     def on_close():
         if driver:

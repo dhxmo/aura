@@ -15,7 +15,7 @@ def init_db(db_file):
 
         c.execute(
             "CREATE TABLE IF NOT EXISTS assistants (id INTEGER PRIMARY KEY, user_id TEXT, assistant_id TEXT, "
-            "thread_id TEXT)"
+            "thread_id TEXT, email_assistant_id TEXT, email_thread_id TEXT)"
         )
 
         # select user row
@@ -46,6 +46,21 @@ def create_assistant_id(user_id, assistant_id, thread_id):
 
         # Update the existing row
         c.execute("UPDATE assistants SET assistant_id = ?, thread_id = ? WHERE user_id = ?",
+                  (assistant_id, thread_id, user_id))
+
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print("Error occurred while create_user: ", str(e))
+
+
+def create_email_assistant_id(user_id, assistant_id, thread_id):
+    try:
+        conn = sqlite3.connect(Config.db_file)
+        c = conn.cursor()
+
+        # Update the existing row
+        c.execute("UPDATE assistants SET email_assistant_id = ?, email_thread_id = ? WHERE user_id = ?",
                   (assistant_id, thread_id, user_id))
 
         conn.commit()
