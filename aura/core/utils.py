@@ -12,7 +12,7 @@ from aura.engine.image_parse import format_vision_prompt, get_content_chat_compl
 
 def play_sound(filename):
     current_dir = os.getcwd()
-    file_path = os.path.join(current_dir, 'assets', 'audio', filename)
+    file_path = os.path.join(current_dir, 'aura', 'assets', 'audio', filename)
     playsound(file_path)
 
 # Function to check if the WebDriver is in focus

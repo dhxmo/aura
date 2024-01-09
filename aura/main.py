@@ -1,5 +1,6 @@
 import threading
 import tkinter as tk
+from concurrent.futures import ThreadPoolExecutor
 
 import requests
 from selenium import webdriver
@@ -8,7 +9,7 @@ from selenium_stealth import stealth
 from aura.core.config import Config
 from aura.core.db import init_db
 from aura.core.driver_session import set_session_storage, save_session_storage, get_chrome_user_data_dir
-from aura.core.speech_recognition import AuraSpeechRecognition
+from aura.core.speech_recognition import AuraSpeechRecognition, worker_speech_recognition
 
 
 # TODO: add fail case return statements
@@ -86,29 +87,23 @@ def init_app():
             )
     driver.get("https://www.google.com")
 
-
-    # Start the worker thread
-    # thread = threading.Thread(target=worker_speech_recognition, args=(driver,))
-    # thread.daemon = True
-    # thread.start()
-
-    thread = threading.Thread(target=save_session_storage, args=(driver,))
-    thread.daemon = True
-    thread.start()
-
-    thread = threading.Thread(target=set_session_storage, args=(driver,))
-    thread.daemon = True
-    thread.start()
-
     def on_close():
         driver.quit()
         root.destroy()
 
     root.protocol("WM_DELETE_WINDOW", on_close)
 
+    # Start the worker threads
+    worker_speech_thread = threading.Thread(target=worker_speech_recognition, args=(driver,))
+    worker_speech_thread.daemon = True
+    worker_speech_thread.start()
+
+    save_session_storage_thread = threading.Thread(target=save_session_storage, args=(driver,))
+    save_session_storage_thread.daemon = True
+    save_session_storage_thread.start()
+
+    set_session_storage_thread = threading.Thread(target=set_session_storage, args=(driver,))
+    set_session_storage_thread.daemon = True
+    set_session_storage_thread.start()
+
     root.mainloop()
-
-
-def worker_speech_recognition(driver):
-    sr = AuraSpeechRecognition()
-    sr.run(driver)

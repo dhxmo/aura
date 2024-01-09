@@ -64,9 +64,15 @@ def set_session_storage(driver):
         session_storage = session_storages.get(current_hostname)
 
         if session_storage:
-            # Execute JavaScript code to set the session storage
-            for key, value in session_storage.items():
-                driver.execute_script(f"window.sessionStorage.setItem('{key}', '{value}');")
+            # Retrieve the current session storage from the driver
+            current_session_storage = {k: driver.execute_script(f"return window.sessionStorage.getItem('{k}');") for k
+                                       in session_storage.keys()}
+
+            # Compare the current session storage with the one from the JSON file
+            if current_session_storage != session_storage:
+                # If they are different, set the session storage
+                for key, value in session_storage.items():
+                    driver.execute_script(f"window.sessionStorage.setItem('{key}', '{value}');")
     except FileNotFoundError:
         pass
 
