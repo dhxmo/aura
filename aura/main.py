@@ -88,15 +88,16 @@ def init_app():
     driver.get("https://www.google.com")
 
     def on_close():
-        driver.quit()
+        if driver:
+            driver.quit()
         root.destroy()
 
     root.protocol("WM_DELETE_WINDOW", on_close)
 
     # Start the worker threads
-    worker_speech_thread = threading.Thread(target=worker_speech_recognition, args=(driver,))
-    worker_speech_thread.daemon = True
-    worker_speech_thread.start()
+    # worker_speech_thread = threading.Thread(target=worker_speech_recognition, args=(driver,))
+    # worker_speech_thread.daemon = True
+    # worker_speech_thread.start()
 
     save_session_storage_thread = threading.Thread(target=save_session_storage, args=(driver,))
     save_session_storage_thread.daemon = True
