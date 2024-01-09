@@ -1,10 +1,9 @@
 import time
 
-from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchWindowException
 import pyautogui
-
-from aura.core.utils import driver_in_focus
+from selenium.common.exceptions import NoSuchWindowException, NoSuchElementException
+from selenium.webdriver.common.by import By
+import pygetwindow as gw
 
 
 def browser_actions(driver, detected_keyword, flag):
@@ -67,8 +66,6 @@ def tab(driver, action_type):
 
 def window(driver, action_type):
     if driver:
-        driver_in_focus(driver)
-
         # Get the current window handle
         current_handle = driver.current_window_handle
 
@@ -106,8 +103,6 @@ def save_bookmark(driver):
     if driver:
         driver_in_focus(driver)
 
-        time.sleep(1)
-
         # Press Ctrl + D to bookmark the page
         pyautogui.hotkey('ctrl', 'd')
 
@@ -115,3 +110,38 @@ def save_bookmark(driver):
         pyautogui.press('enter')
 
         return
+
+def open_bookmark(driver, keyword):
+    if driver:
+        driver_in_focus(driver)
+
+        # Navigate to the bookmarks page
+        driver.get('chrome://bookmarks')
+
+        try:
+            time.sleep(1)
+
+            # Press Tab four times
+            pyautogui.press('tab', presses=2, interval=0.1)
+
+            # Type the keyword into the search bar
+            pyautogui.write(keyword, interval=0.1)
+
+            time.sleep(1)
+
+            # Press Tab four times
+            pyautogui.press('tab', presses=4, interval=0.1)
+
+            time.sleep(1)
+
+            # Press Enter to submit the form
+            pyautogui.press('space')
+            pyautogui.press('enter')
+
+        except NoSuchElementException:
+            print("No such element found")
+def driver_in_focus(driver):
+    window(driver=driver, action_type='maximize')
+    current_window = gw.getWindowsWithTitle(driver.title)[0]
+    current_window.activate()
+    time.sleep(1)

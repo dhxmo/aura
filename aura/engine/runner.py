@@ -1,5 +1,6 @@
 from aura.core.utils import play_sound
-from aura.intents.browser_actions import browser_actions, navigate, scroll, window, tab, click_submit, save_bookmark
+from aura.intents.browser_actions import browser_actions, navigate, scroll, window, tab, click_submit, save_bookmark, \
+    open_bookmark
 from aura.intents.browser_links import summarize_links, click_link
 from aura.intents.clarify import clarify
 from aura.intents.computer_explorer import find_dir_in_explorer, find_file_powershell
@@ -64,6 +65,8 @@ def runner(intent, driver):
             click_submit(driver)
         case 'save_bookmark':
             save_bookmark(driver)
+        case 'open_bookmark':
+            open_bookmark(driver=driver, keyword=intent_dict['detected_keyword'])
         case 'clarify':
             clarify()
 

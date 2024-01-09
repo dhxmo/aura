@@ -3,7 +3,7 @@ import json
 from urllib.parse import urlparse
 import os
 
-from selenium.common.exceptions import NoSuchWindowException
+from selenium.common.exceptions import NoSuchWindowException, WebDriverException, SessionNotCreatedException
 
 
 def get_chrome_user_data_dir():
@@ -54,8 +54,10 @@ def save_session_storage(driver):
         time.sleep(5)
     except NoSuchWindowException:
         print("Window is no longer available.")
-
-
+    except WebDriverException:
+        print("Cannot determine loading status")
+    except SessionNotCreatedException:
+        print("Session not available")
 
 def set_session_storage(driver):
 
@@ -98,3 +100,7 @@ def set_session_storage(driver):
                 set_session_storage(driver)
     except NoSuchWindowException:
         print("Window is no longer available.")
+    except WebDriverException:
+        print("Cannot determine loading status")
+    except SessionNotCreatedException:
+        print("Session not available")

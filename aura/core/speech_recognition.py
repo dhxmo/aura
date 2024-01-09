@@ -29,11 +29,11 @@ class AuraSpeechRecognition:
                         text = self.r.recognize_google(audio)
                         print("text", text)
 
-                        if 'aura activate' in text.lower() and not self.active:
+                        if 'activate' in text.lower() and not self.active:
                             self.active = True
                             play_sound(self.activate_voice_sound)
 
-                        elif 'aura deactivate' in text.lower() and self.active:
+                        elif 'deactivate' in text.lower() and self.active:
                             self.active = False
                             play_sound(self.deactivate_voice_sound)
 
