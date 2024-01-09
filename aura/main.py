@@ -4,6 +4,7 @@ import tkinter as tk
 import requests
 from selenium import webdriver
 from selenium_stealth import stealth
+from selenium.common.exceptions import SessionNotCreatedException
 
 from aura.core.config import Config
 from aura.core.db import init_db
@@ -16,13 +17,13 @@ from aura.core.speech_recognition import AuraSpeechRecognition, worker_speech_re
 # TODO: add a Aura server check. needs to be a paid user
 # TODO: check user. only allow one session per email
 # TODO: check for updates mechanism
-
+# TODO: if there any active Chrome sessions, close them
 def init_app():
     user_id = init_db(Config.db_file)
 
     root = tk.Tk()
     root.title('Aura')
-    root.geometry('1000x750')
+    root.geometry('1500x750')
 
     aura_title = "Welcome to Aura"
     title_label = tk.Label(root, text=aura_title, font=("Helvetica", 16))
@@ -31,8 +32,8 @@ def init_app():
     aura_text = """
     When Aura is ready, you will hear a notification sound.
     
-    Say "Aura activate" to begin giving commands to Aura.
-    Say "Aura deactivate" to deactivate Aura.
+    Say "Activate" to begin giving commands to Aura.
+    Say "Deactivate" to deactivate Aura.
     
     To do a search on your computer, say "search for Downloads on the computer"
     To search for any folder on your system, say "search for Program Files on the computer" or 
@@ -57,8 +58,15 @@ def init_app():
     To open a previously bookmarked page, say "Open the bookmark I have for BuzzFeed blog post about Keto diet" 
     To compose a Gmail message, say "Compose an email"
     To rewrite the mail you've composed, say "Touch up this email in a professional tone"  
+    To open the attach files in mail, say "Attach a file to this email"
+    To send an email, say "Send this email"
+    If you have too much promotional junk and want to delete it all in one go, 
+    just say "Delete all Promotional and Social mails"
     
     Pls Note: When the narration is going on, if a command is spoken, the narration will stop.
+    
+    Aura understands everything you say, the above are just examples. Please feel free to experiment and find out 
+    how to make Aura work for you in the bext wat possible.
     """
 
     try:
@@ -79,17 +87,21 @@ def init_app():
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option('useAutomationExtension', False)
     options.add_argument('--disable-blink-features=AutomationControlled')
-    driver = webdriver.Chrome(options=options)
-    stealth(driver,
-            languages=["en-US", "en"],
-            vendor="Google Inc.",
-            platform="Win32",
-            webgl_vendor="Intel Inc.",
-            renderer="Intel Iris OpenGL Engine",
-            fix_hairline=True,
-            )
-    # driver.get("https://www.google.com")
-    driver.get("https://mail.google.com/mail/u/0/#drafts?compose=CllgCHrjDTQPwCkNFMfgJsLFzPzHfTrjVsDSdvvkmKQGSnhhxCtVRBFsspzFBQrbfSjzTNWdZGV")
+
+    try:
+        driver = webdriver.Chrome(options=options)
+        stealth(driver,
+                languages=["en-US", "en"],
+                vendor="Google Inc.",
+                platform="Win32",
+                webgl_vendor="Intel Inc.",
+                renderer="Intel Iris OpenGL Engine",
+                fix_hairline=True,
+                )
+        # driver.get("https://www.google.com")
+        driver.get("https://mail.google.com/mail/u/0/")
+    except SessionNotCreatedException:
+        print("Chrome failed to start. Another session ongoing")
 
     def on_close():
         if driver:

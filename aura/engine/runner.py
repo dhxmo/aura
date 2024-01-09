@@ -5,7 +5,8 @@ from aura.intents.browser_links import summarize_links, click_link
 from aura.intents.clarify import clarify
 from aura.intents.computer_explorer import find_dir_in_explorer, find_file_powershell
 from aura.intents.computer_search import computer_search
-from aura.intents.email_actions import compose_email, touch_up_email
+from aura.intents.email_actions import compose_email, touch_up_email, attach_file_to_email, email_send, \
+    delete_promotional_n_socials
 from aura.intents.on_screen import on_screen
 
 
@@ -72,6 +73,12 @@ def runner(intent, driver):
             compose_email(driver)
         case 'touch_up_email':
             touch_up_email(driver=driver, tone=intent_dict['detected_keyword'])
+        case 'attach_file_to_email':
+            attach_file_to_email(driver=driver)
+        case 'email_send':
+            email_send(driver)
+        case 'delete_promotional_n_socials':
+            delete_promotional_n_socials(driver)
         case 'clarify':
             clarify()
 

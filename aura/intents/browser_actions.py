@@ -143,8 +143,25 @@ def open_bookmark(driver, keyword):
 def driver_in_focus(driver):
     try:
         window(driver=driver, action_type='maximize')
-        current_window = gw.getWindowsWithTitle(driver.title)[0]
-        current_window.activate()
+        # current_window = gw.getWindowsWithTitle(driver.title)[0]
+        # current_window.activate()
+
+        # Get the title of the current window
+        current_window_title = driver.title
+
+        # Get the currently active window
+        active_window = gw.getActiveWindow()
+
+        # Get the window with the current title
+        windows = gw.getWindowsWithTitle(current_window_title)
+
+        if windows:
+            current_window = windows[0]
+
+            # If the currently active window is not the window with the current title, activate it
+            if active_window != current_window:
+                current_window.activate()
+
         time.sleep(1)
     except gw.PyGetWindowException:
         print("error code: 0 - Operation completed successfully")
