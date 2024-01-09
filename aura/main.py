@@ -5,10 +5,10 @@ import requests
 from selenium import webdriver
 from selenium_stealth import stealth
 
-from core.config import Config
-from core.db import init_db
-from core.driver_session import set_session_storage, save_session_storage, get_chrome_user_data_dir
-from core.speech_recognition import AuraSpeechRecognition
+from aura.core.config import Config
+from aura.core.db import init_db
+from aura.core.driver_session import set_session_storage, save_session_storage, get_chrome_user_data_dir
+from aura.core.speech_recognition import AuraSpeechRecognition
 
 
 # TODO: add fail case return statements
@@ -85,7 +85,6 @@ def init_app():
             fix_hairline=True,
             )
     driver.get("https://www.google.com")
-    set_session_storage(driver)
 
 
     # Start the worker thread
@@ -94,6 +93,10 @@ def init_app():
     # thread.start()
 
     thread = threading.Thread(target=save_session_storage, args=(driver,))
+    thread.daemon = True
+    thread.start()
+
+    thread = threading.Thread(target=set_session_storage, args=(driver,))
     thread.daemon = True
     thread.start()
 
@@ -109,7 +112,3 @@ def init_app():
 def worker_speech_recognition(driver):
     sr = AuraSpeechRecognition()
     sr.run(driver)
-
-
-if __name__ == '__main__':
-    init_app()

@@ -1,6 +1,6 @@
 from openai import OpenAI
 
-from core.config import Config
+from aura.core.config import Config
 
 VISION_PROMPT = """
 User Objective: {user_objective}

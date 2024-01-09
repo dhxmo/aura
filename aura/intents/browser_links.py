@@ -1,7 +1,7 @@
 from fuzzywuzzy import process
 from selenium.webdriver.common.by import By
 
-from core.utils import maximize_window_if_not_in_focus, take_rolling_screenshot, screenshot_2_voice
+from aura.core.utils import maximize_window_if_not_in_focus, take_rolling_screenshot, screenshot_2_voice
 
 
 def summarize_links(driver):

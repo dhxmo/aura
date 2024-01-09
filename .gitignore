@@ -56,12 +56,13 @@ cover/
 *.mo
 *.pot
 
-# Django stuff:
+# local stuff:
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
 aura.db
+session_storage.json
 
 # Flask stuff:
 instance/

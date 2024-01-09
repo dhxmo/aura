@@ -1,7 +1,6 @@
 import speech_recognition as sr
-
-from .aura import init_aura
-from .utils import play_sound
+from aura.core.aura import init_aura
+from aura.core.utils import play_sound
 
 
 class AuraSpeechRecognition:

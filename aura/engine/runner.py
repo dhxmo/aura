@@ -1,10 +1,10 @@
-from core.utils import play_sound
-from intents.browser_actions import browser_actions, navigate, scroll, window, tab, click_submit
-from intents.browser_links import summarize_links, click_link
-from intents.clarify import clarify
-from intents.computer_explorer import find_dir_in_explorer, find_file_powershell
-from intents.computer_search import computer_search
-from intents.on_screen import on_screen
+from aura.core.utils import play_sound
+from aura.intents.browser_actions import browser_actions, navigate, scroll, window, tab, click_submit
+from aura.intents.browser_links import summarize_links, click_link
+from aura.intents.clarify import clarify
+from aura.intents.computer_explorer import find_dir_in_explorer, find_file_powershell
+from aura.intents.computer_search import computer_search
+from aura.intents.on_screen import on_screen
 
 
 def runner(intent, driver):

@@ -7,7 +7,7 @@ from PIL import Image
 import pyttsx3
 from selenium.webdriver.common.by import By
 
-from engine.image_parse import format_vision_prompt, get_content_chat_completions
+from aura.engine.image_parse import format_vision_prompt, get_content_chat_completions
 
 
 def play_sound(filename):

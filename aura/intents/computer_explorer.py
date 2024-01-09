@@ -2,8 +2,8 @@ import os
 import subprocess
 import pyttsx3
 
-from core.utils import read_aloud
-from intents.computer_search import computer_search
+from aura.core.utils import read_aloud
+from aura.intents.computer_search import computer_search
 
 # List of drives to search
 drives = ['~', 'C:\\', 'D:\\', 'E:\\', 'F:\\', 'G:\\', 'H:\\', 'I:\\', 'J:\\', 'K:\\', 'L:\\', 'M:\\', 'N:\\',

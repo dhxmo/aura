@@ -2,9 +2,9 @@ import sqlite3
 
 from openai import OpenAI
 
-from core.config import Config
-from core.db import create_assistant_id
-from core.openai_api import OpenAIAPIClient, fetch_thread_msgs
+from aura.core.config import Config
+from aura.core.db import create_assistant_id
+from aura.core.openai_api import OpenAIAPIClient, fetch_thread_msgs
 
 
 def parser(payload, db_file):

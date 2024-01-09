@@ -2,7 +2,7 @@ import os
 
 import pyautogui
 
-from core.utils import screenshot_2_voice, take_rolling_screenshot
+from aura.core.utils import screenshot_2_voice, take_rolling_screenshot
 
 
 def on_screen(objective, driver=None):

@@ -1,6 +1,6 @@
-from core.config import Config
-from engine.parser import parser
-from engine.runner import runner
+from aura.core.config import Config
+from aura.engine.parser import parser
+from aura.engine.runner import runner
 
 
 def init_aura(text, driver):

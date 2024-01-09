@@ -1,11 +1,7 @@
 from selenium.webdriver.common.by import By
 
-from core.utils import maximize_window_if_not_in_focus
-
 
 def browser_actions(driver, detected_keyword, flag):
-    maximize_window_if_not_in_focus(driver)
-
     if flag=='web_search':
         url = f"https://www.google.com/search?q={detected_keyword}"
     elif flag=='web_browse':
@@ -17,16 +13,12 @@ def browser_actions(driver, detected_keyword, flag):
 
 
 def navigate(driver, navigation_type):
-    maximize_window_if_not_in_focus(driver)
-
     if navigation_type == 'back':
         driver.back()
     elif navigation_type=='forward':
         driver.forward()
 
 def scroll(driver, scroll_type):
-    maximize_window_if_not_in_focus(driver)
-
     if scroll_type == 'up':
         driver.execute_script("window.scrollBy(0, -250)")
     elif scroll_type == 'down':
@@ -39,8 +31,6 @@ def scroll(driver, scroll_type):
     return
 
 def tab(driver, action_type):
-    maximize_window_if_not_in_focus(driver)
-
     if action_type == 'new':
         driver.execute_script("window.open('');")
 
@@ -56,8 +46,6 @@ def tab(driver, action_type):
 
 
 def window(driver, action_type):
-    maximize_window_if_not_in_focus(driver)
-
     if action_type == 'minimize':
        # Get the current window handle
        current_handle = driver.current_window_handle

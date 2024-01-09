@@ -2,7 +2,7 @@ import hashlib
 import os
 import sqlite3
 
-from core.config import Config
+from aura.core.config import Config
 
 
 def init_db(db_file):

@@ -1,4 +1,4 @@
-from core.utils import play_sound, read_aloud
+from aura.core.utils import play_sound, read_aloud
 
 
 def clarify():
