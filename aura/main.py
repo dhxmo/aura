@@ -3,21 +3,23 @@ import tkinter as tk
 
 import requests
 from selenium import webdriver
-from selenium_stealth import stealth
 from selenium.common.exceptions import SessionNotCreatedException
+from selenium_stealth import stealth
 
 from aura.core.config import Config
 from aura.core.db import init_db
 from aura.core.driver_session import set_session_storage, save_session_storage, get_chrome_user_data_dir
-from aura.core.speech_recognition import AuraSpeechRecognition, worker_speech_recognition
+from aura.core.speech_recognition import worker_speech_recognition
 
 
 # TODO: add fail case return statements
-# TODO: speech recog tooooo slow. fasten it up
+# TODO: add else statements play_sound to inform user what is missing
 # TODO: add a Aura server check. needs to be a paid user
 # TODO: check user. only allow one session per email
 # TODO: check for updates mechanism
 # TODO: if there any active Chrome sessions, close them
+# TODO write test for selenium elemtn pick -> click_submit, email_actions
+
 def init_app():
     user_id = init_db(Config.db_file)
 
@@ -37,7 +39,7 @@ def init_app():
     
     To do a search on your computer, say "search for Downloads on the computer"
     To search for any folder on your system, say "search for Program Files on the computer" or 
-    "Aura, search for Test directory in D: drive"
+    "search for Test directory in D: drive"
     To search for a file mention where the file is, say "search for untitled.txt in D drive in 
     Test sub directory"
     To find out what images are on the screen, say "what are the images on the screen right now?"
@@ -48,7 +50,7 @@ def init_app():
     To shop for something on amazon, say "shop for headphones"
     To scroll down a page on chrome, say "scroll down on Chrome"
     To open new tab or close current tab, say "open new tab on the browser"
-    To minimize or close browser window, say "close browser window"
+    To minimize or close browser window, say "close/minimize browser window"
     To find out links on the page, say "what are the links on this webpage?"
     To click on a specific link like lets say an article from BuzzFeed, say "click on the BuzzFeed link"  
     To get a summary of the amazon product on the browser, say "please summarize the amazon product 
@@ -64,7 +66,7 @@ def init_app():
     just say "Delete all Promotional and Social mails"
     
     Pls Note: When the narration is going on, if a command is spoken, the narration will stop.
-    
+
     Aura understands everything you say, the above are just examples. Please feel free to experiment and find out 
     how to make Aura work for you in the bext wat possible.
     """
@@ -98,8 +100,7 @@ def init_app():
                 renderer="Intel Iris OpenGL Engine",
                 fix_hairline=True,
                 )
-        # driver.get("https://www.google.com")
-        driver.get("https://mail.google.com/mail/u/0/")
+        driver.get("https://www.google.com")
     except SessionNotCreatedException:
         print("Chrome failed to start. Another session ongoing")
 

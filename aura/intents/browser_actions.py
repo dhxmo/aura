@@ -5,6 +5,8 @@ from selenium.common.exceptions import NoSuchWindowException, NoSuchElementExcep
 from selenium.webdriver.common.by import By
 import pygetwindow as gw
 
+from aura.core.driver_session import get_chrome_user_data_dir
+
 
 def browser_actions(driver, detected_keyword, flag):
     if flag=='web_search':
@@ -95,8 +97,11 @@ def window(driver, action_type):
 def click_submit(driver):
     if driver:
         driver_in_focus(driver)
-        button = driver.find_element(By.CSS_SELECTOR, 'input[type="submit"]')
-        button.click()
+        try:
+            button = driver.find_element(By.CSS_SELECTOR, 'input[type="submit"]')
+            button.click()
+        except NoSuchElementException:
+            print("no such element found")
         return
 
 def save_bookmark(driver):
@@ -105,6 +110,8 @@ def save_bookmark(driver):
 
         # Press Ctrl + D to bookmark the page
         pyautogui.hotkey('ctrl', 'd')
+
+        time.sleep(0.4)
 
         # Press Enter to confirm the bookmark
         pyautogui.press('enter')
@@ -140,11 +147,10 @@ def open_bookmark(driver, keyword):
 
         except NoSuchElementException:
             print("No such element found")
+
 def driver_in_focus(driver):
     try:
         window(driver=driver, action_type='maximize')
-        # current_window = gw.getWindowsWithTitle(driver.title)[0]
-        # current_window.activate()
 
         # Get the title of the current window
         current_window_title = driver.title

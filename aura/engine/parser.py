@@ -56,7 +56,7 @@ The user wants to interact with the computer and you must help them. They want t
 'scroll_up', 'scroll_down', 'scroll_top', 'scroll_bottom', 'new_tab', 'close_tab', 'minimize_window', 'close_window', 
 'find_dir_in_explorer', 'find_file_in_dir', 'images_on_screen', 'whats_on_screen', 'amazon_product_summary', 
 'submit_form', 'save_bookmark', 'open_previous_bookmark', 'compose_email', 'touch_up_email', 'attach_file_to_email',
-'email_send', 'delete_promotional_n_socials' or 'clarify' in the computer. 
+'email_send', 'delete_promotional_n_socials', or 'clarify' in the computer. 
 
 You must figure out 2 things. One, what action they want to perform. Two, what the user wants to search for. 
 
