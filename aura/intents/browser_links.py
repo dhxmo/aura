@@ -10,6 +10,7 @@ def summarize_links(driver):
     image_capture_n_parse(screenshot_file_path=screenshot_file_path, user_objective="Summarize the links of this page")
     return
 
+
 def click_link(driver, link_keyword):
     # Find all the links on the page
     links = driver.find_elements(By.TAG_NAME, 'a')

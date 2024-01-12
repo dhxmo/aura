@@ -1,5 +1,3 @@
-import os
-
 import pyautogui
 
 from aura.core.utils import image_capture_n_parse, take_rolling_screenshot, get_screenshot_file

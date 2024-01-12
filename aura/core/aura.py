@@ -7,8 +7,7 @@ from aura.intents.free_flow import free_flow
 
 def init_aura(text, driver):
     # intent = parser(payload=text, db_file=Config.db_file)
-    intent="""command='free_flow', detected_keyword='go to google chrome and open a new excel file in google drive'"""
-    # intent = parse_user_input(user_input=text)\\\\
+    intent = """command='free_flow', detected_keyword='go to google chrome and open a new excel file in google drive'"""
     print("intent", intent)
 
     intent_dict = clean_up_intent(intent)
@@ -19,4 +18,3 @@ def init_aura(text, driver):
         runner(intent_dict=intent_dict, driver=driver)
 
     return
-

@@ -18,7 +18,8 @@ from aura.core.speech_recognition import worker_speech_recognition
 # TODO: check user. only allow one session per email
 # TODO: check for updates mechanism
 # TODO: if there any active Chrome sessions, close them
-# TODO write test for selenium elemtn pick -> click_submit, email_actions
+# TODO write test for selenium element pick -> click_submit, email_actions
+
 
 def init_app():
     user_id = init_db(Config.db_file)
@@ -85,7 +86,8 @@ def init_app():
     options = webdriver.ChromeOptions()
     options.add_argument(f"user-data-dir={chrome_user_data}")
     options.add_argument(
-        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36")
+        "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/90.0.4430.212 Safari/537.36")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option('useAutomationExtension', False)
     options.add_argument('--disable-blink-features=AutomationControlled')

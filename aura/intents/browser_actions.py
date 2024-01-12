@@ -1,19 +1,17 @@
 import time
 
 import pyautogui
+import pygetwindow as gw
 from selenium.common.exceptions import NoSuchWindowException, NoSuchElementException
 from selenium.webdriver.common.by import By
-import pygetwindow as gw
-
-from aura.core.driver_session import get_chrome_user_data_dir
 
 
 def browser_actions(driver, detected_keyword, flag):
-    if flag=='web_search':
+    if flag == 'web_search':
         url = f"https://www.google.com/search?q={detected_keyword}"
-    elif flag=='web_browse':
+    elif flag == 'web_browse':
         url = detected_keyword
-    elif flag=='web_shop':
+    elif flag == 'web_shop':
         url = f"https://www.amazon.com/s?k={detected_keyword}"
 
     driver.get(url)
@@ -25,10 +23,11 @@ def navigate(driver, navigation_type):
 
         if navigation_type == 'back':
             driver.back()
-        elif navigation_type=='forward':
+        elif navigation_type == 'forward':
             driver.forward()
 
         return
+
 
 def scroll(driver, scroll_type):
     if driver:
@@ -47,6 +46,7 @@ def scroll(driver, scroll_type):
             print("Window is no longer available.")
 
         return
+
 
 def tab(driver, action_type):
     if driver:
@@ -75,11 +75,11 @@ def window(driver, action_type):
         all_handles = driver.window_handles
 
         if action_type == 'minimize':
-           # Check if the current window handle is in the list of all window handles
-           if current_handle in all_handles:
-               driver.minimize_window()
-           else:
-               print("Window does not exist.")
+            # Check if the current window handle is in the list of all window handles
+            if current_handle in all_handles:
+                driver.minimize_window()
+            else:
+                print("Window does not exist.")
         elif action_type == 'maximize':
             # Check if the current window handle is in the list of all window handles
             if current_handle in all_handles:
@@ -87,12 +87,13 @@ def window(driver, action_type):
             else:
                 print("Window does not exist.")
         elif action_type == 'close':
-           if current_handle in all_handles:
-               driver.quit()
-           else:
-               print("Window does not exist.")
+            if current_handle in all_handles:
+                driver.quit()
+            else:
+                print("Window does not exist.")
 
         return
+
 
 def click_submit(driver):
     if driver:
@@ -103,6 +104,7 @@ def click_submit(driver):
         except NoSuchElementException:
             print("no such element found")
         return
+
 
 def save_bookmark(driver):
     if driver:
@@ -117,6 +119,7 @@ def save_bookmark(driver):
         pyautogui.press('enter')
 
         return
+
 
 def open_bookmark(driver, keyword):
     if driver:
@@ -147,6 +150,7 @@ def open_bookmark(driver, keyword):
 
         except NoSuchElementException:
             print("No such element found")
+
 
 def driver_in_focus(driver):
     try:

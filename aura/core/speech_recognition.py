@@ -2,6 +2,7 @@ import speech_recognition as sr
 from aura.core.aura import init_aura
 from aura.core.utils import play_sound
 
+
 def worker_speech_recognition(driver):
     speech_recog = AuraSpeechRecognition()
     speech_recog.run(driver)

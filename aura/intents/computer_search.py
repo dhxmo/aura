@@ -3,6 +3,7 @@ import time
 
 import pyautogui
 
+
 def computer_search(detected_keyword):
     if platform.system() == "Windows":
         pyautogui.press("win")

@@ -7,11 +7,11 @@ from selenium.common.exceptions import NoSuchWindowException, WebDriverException
 
 
 def get_chrome_user_data_dir():
-   """Returns the path to the Chrome user data directory."""
-   if os.name == 'nt': # Windows
-       return os.path.expandvars(r"%LOCALAPPDATA%\Google\Chrome\User Data")
-   else:
-       raise Exception("Unsupported operating system.")
+    """Returns the path to the Chrome user data directory."""
+    if os.name == 'nt':  # Windows
+        return os.path.expandvars(r"%LOCALAPPDATA%\Google\Chrome\User Data")
+    else:
+        raise Exception("Unsupported operating system.")
 
 
 def save_session_storage(driver):
@@ -59,8 +59,8 @@ def save_session_storage(driver):
     except SessionNotCreatedException:
         print("Session not available")
 
-def set_session_storage(driver):
 
+def set_session_storage(driver):
     current_dir = os.getcwd()
     session_storage_file_path = os.path.join(current_dir, 'session_storage.json')
 
@@ -81,7 +81,8 @@ def set_session_storage(driver):
 
             if session_storage:
                 # Retrieve the current session storage from the driver
-                current_session_storage = {k: driver.execute_script(f"return window.sessionStorage.getItem('{k}');") for k
+                current_session_storage = {k: driver.execute_script(f"return window.sessionStorage.getItem('{k}');") for
+                                           k
                                            in session_storage.keys()}
 
                 # Compare the current session storage with the one from the JSON file

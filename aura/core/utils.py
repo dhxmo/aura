@@ -16,6 +16,7 @@ def play_sound(filename):
     file_path = os.path.join(current_dir, 'aura', 'assets', 'audio', filename)
     playsound(file_path)
 
+
 # Function to check if the WebDriver is in focus
 def is_driver_in_focus(driver):
     # Save the initial active element
@@ -23,10 +24,11 @@ def is_driver_in_focus(driver):
 
     return initial_active_element == driver.switch_to.active_element
 
+
 # Function to maximize the window if the WebDriver is not in focus
 def maximize_window_if_not_in_focus(driver):
-   if not is_driver_in_focus(driver):
-       driver.maximize_window()
+    if not is_driver_in_focus(driver):
+        driver.maximize_window()
 
 
 def take_rolling_screenshot(driver, roll_down_steps, is_amazon=None):
@@ -72,8 +74,8 @@ def image_capture_n_parse(screenshot_file_path, user_objective,
         if is_free_flow and screen_width and screen_height:
             # format vision prompt
             free_flow_prompt = format_free_flow_prompt(screen_width=screen_width,
-                                                    screen_height=screen_height,
-                                                    user_action=user_objective)
+                                                       screen_height=screen_height,
+                                                       user_action=user_objective)
             return get_content_chat_completions(img_base64=img_base64, prompt=free_flow_prompt)
 
         # format vision prompt
@@ -84,6 +86,7 @@ def image_capture_n_parse(screenshot_file_path, user_objective,
 
         # recite it out
         read_aloud(res)
+
 
 def read_aloud(res):
     engine = pyttsx3.init()
@@ -102,6 +105,7 @@ def get_screenshot_file():
 
     return screenshot_file_path
 
+
 def clean_up_intent(intent):
     # Find the start and end indices of detected_keyword
     start = re.search('detected_keyword=\'', intent).end()
@@ -116,4 +120,4 @@ def clean_up_intent(intent):
     print("intent", intent)
 
     intent_list = intent.split(",")
-    return  {elem.split("=")[0].strip(): elem.split("=")[1].strip("'") for elem in intent_list}
+    return {elem.split("=")[0].strip(): elem.split("=")[1].strip("'") for elem in intent_list}

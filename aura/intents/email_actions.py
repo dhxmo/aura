@@ -1,10 +1,9 @@
-import re
+import sqlite3
 import time
 
-from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException
-import sqlite3
 from openai import OpenAI
+from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException
+from selenium.webdriver.common.by import By
 
 from aura.core.config import Config
 from aura.core.db import create_email_assistant_id
@@ -33,18 +32,18 @@ def email_assistant_client(payload, email_instruction):
                 email_thread_id = user[5]
 
                 email_run = openai_client.submit_message(assistant_id=email_assistant_id,
-                                                          thread_id=email_thread_id,
-                                                          user_message=payload)
+                                                         thread_id=email_thread_id,
+                                                         user_message=payload)
             else:
                 # create assistant
                 email_assistant_id = openai_client.get_assistant(email_instruction).id
                 email_thread_id, email_run = openai_client.create_thread_and_run(assistant_id=email_assistant_id,
-                                                                                   user_input=payload)
+                                                                                 user_input=payload)
 
                 # user[1] - user_id
                 create_email_assistant_id(user_id=user[1],
-                                    assistant_id=email_assistant_id,
-                                    thread_id=email_thread_id)
+                                          assistant_id=email_assistant_id,
+                                          thread_id=email_thread_id)
 
             text = fetch_thread_msgs(openai_client=openai_client,
                                      run=email_run,
@@ -65,14 +64,14 @@ def compose_email(driver):
 
         # Check if the current URL is 'mail.google.com'
         if 'https://mail.google.com' in current_url:
-           try:
-               button = driver.find_element(By.CSS_SELECTOR, 'div.T-I.T-I-KE.L3[jscontroller="eIu7Db"]')
-               if button:
-                   # Click the button
-                   button.click()
-                   read_aloud("Cursor is on To. Type the email addresses you want to send the email to")
-           except NoSuchElementException:
-               print("no such element found")
+            try:
+                button = driver.find_element(By.CSS_SELECTOR, 'div.T-I.T-I-KE.L3[jscontroller="eIu7Db"]')
+                if button:
+                    # Click the button
+                    button.click()
+                    read_aloud("Cursor is on To. Type the email addresses you want to send the email to")
+            except NoSuchElementException:
+                print("no such element found")
         return
 
 
@@ -100,6 +99,7 @@ def touch_up_email(driver, tone):
             except NoSuchElementException:
                 print("no such element found")
 
+
 def attach_file_to_email(driver):
     if driver:
         driver_in_focus(driver)
@@ -109,6 +109,7 @@ def attach_file_to_email(driver):
         except NoSuchElementException:
             print("no such element found")
         return
+
 
 def email_send(driver):
     if driver:
@@ -120,6 +121,7 @@ def email_send(driver):
             print("no such element found")
         return
 
+
 def delete_promotional_n_socials(driver):
     if driver:
         driver_in_focus(driver)
@@ -128,7 +130,8 @@ def delete_promotional_n_socials(driver):
         social_btn = driver.find_element(By.CSS_SELECTOR, '#\:1u')
 
         select_all_btn = driver.find_element(By.CSS_SELECTOR, '#\:1y > div.J-J5-Ji.J-JN-M-I-Jm > span')
-        delete_btn = driver.find_element(By.CSS_SELECTOR, '#\:4 > div > div.nH.aqK > div.Cq.aqL > div > div > div:nth-child(2) > div.T-I.J-J5-Ji.nX.T-I-ax7.T-I-Js-Gs.mA > div')
+        delete_btn = driver.find_element(By.CSS_SELECTOR,
+                                         '#\:4 > div > div.nH.aqK > div.Cq.aqL > div > div > div:nth-child(2) > div.T-I.J-J5-Ji.nX.T-I-ax7.T-I-Js-Gs.mA > div')
 
         promo_btn.click()
         time.sleep(0.2)
