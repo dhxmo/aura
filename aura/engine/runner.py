@@ -10,11 +10,8 @@ from aura.intents.email_actions import compose_email, touch_up_email, attach_fil
 from aura.intents.on_screen import on_screen
 
 
-def runner(intent, driver):
+def runner(intent_dict, driver):
     ready_sound = 'ready.mp3'
-
-    intent_list = intent.split(",")
-    intent_dict = {elem.split("=")[0].strip():elem.split("=")[1].strip("'") for elem in intent_list}
 
     match intent_dict['command']:
         case 'computer_search':

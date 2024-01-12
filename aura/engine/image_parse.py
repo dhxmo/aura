@@ -8,6 +8,23 @@ It's important to say the following to help the user who's not able to see the s
 From looking at the screen and based on the User Objective, report what you see on the screen.
 """
 
+FREE_FLOW_PROMPT = """
+The current screen's width and height is {screen_width} and {screen_height} respectively. I need to find out steps needed
+to execute {user_action} from the current state given in the screenshot. 
+
+If any steps require the following actions, please use these keywords in the step's description:
+'web_search', 'web_browse', 'web_shop', 'navigate_forward', 'navigate_back', 'summarize_links', 'click_link', 
+'scroll_up', 'scroll_down', 'scroll_top', 'scroll_bottom', 'new_tab', 'close_tab', 'minimize_window', 'close_window', 
+'find_dir_in_explorer', 'find_file_in_dir', 'images_on_screen', 'whats_on_screen', 'amazon_product_summary', 
+'submit_form', 'save_bookmark', 'open_previous_bookmark', 'compose_email', 'touch_up_email', 'attach_file_to_email',
+'email_send', 'delete_promotional_n_socials'. If none of these actions are needed in the step, then explain the step 
+as you must.
+
+The output has to be in the format: "1='first step that would need to be taken to achieve user action',
+ 2='second step that would need to be taken', step3='third step that would need to be taken'"  
+"""
+
+COORDINATES_PROMPT = """"""
 
 def create_openai_client():
     client = OpenAI()
@@ -15,11 +32,11 @@ def create_openai_client():
     return client
 
 
-def get_content_chat_completions(img_base64):
+def get_content_chat_completions(img_base64, prompt):
     vision_message = [{
         "role": "user",
         "content": [
-            {"type": "text", "text": VISION_PROMPT},
+            {"type": "text", "text": prompt},
             {
                 "type": "image_url",
                 "image_url": {"url": f"data:image/jpeg;base64,{img_base64}"},
@@ -46,3 +63,8 @@ def get_content_chat_completions(img_base64):
 
 def format_vision_prompt(user_objective):
     return VISION_PROMPT.format(user_objective=user_objective)
+
+def format_free_flow_prompt(screen_width, screen_height, user_action):
+    return FREE_FLOW_PROMPT.format(screen_width=screen_width,
+                                   screen_height=screen_height,
+                                   user_action=user_action)

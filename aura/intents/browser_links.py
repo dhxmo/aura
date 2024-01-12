@@ -1,13 +1,13 @@
 from fuzzywuzzy import process
 from selenium.webdriver.common.by import By
 
-from aura.core.utils import maximize_window_if_not_in_focus, take_rolling_screenshot, screenshot_2_voice
+from aura.core.utils import maximize_window_if_not_in_focus, take_rolling_screenshot, image_capture_n_parse
 
 
 def summarize_links(driver):
     maximize_window_if_not_in_focus(driver)
     screenshot_file_path = take_rolling_screenshot(driver=driver, roll_down_steps=4)
-    screenshot_2_voice(screenshot_file_path=screenshot_file_path, user_objective="Summarize the links of this page")
+    image_capture_n_parse(screenshot_file_path=screenshot_file_path, user_objective="Summarize the links of this page")
     return
 
 def click_link(driver, link_keyword):

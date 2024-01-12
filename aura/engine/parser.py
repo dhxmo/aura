@@ -1,3 +1,4 @@
+import re
 import sqlite3
 
 from openai import OpenAI
@@ -56,7 +57,7 @@ The user wants to interact with the computer and you must help them. They want t
 'scroll_up', 'scroll_down', 'scroll_top', 'scroll_bottom', 'new_tab', 'close_tab', 'minimize_window', 'close_window', 
 'find_dir_in_explorer', 'find_file_in_dir', 'images_on_screen', 'whats_on_screen', 'amazon_product_summary', 
 'submit_form', 'save_bookmark', 'open_previous_bookmark', 'compose_email', 'touch_up_email', 'attach_file_to_email',
-'email_send', 'delete_promotional_n_socials', or 'clarify' in the computer. 
+'email_send', 'delete_promotional_n_socials', 'free_flow' or 'clarify' in the computer. 
 
 You must figure out 2 things. One, what action they want to perform. Two, what the user wants to search for. 
 
@@ -80,6 +81,8 @@ If user mentions summarize_links: then the detected_keyword will be empty.
 If user mentions touch_up_email: then the tone in which the email should be touched up in becomes the detected_keyword.
 If no tone is mentioned, the default value for detected_keyword for touch_up_email will be Neutral.
 If user mentions click_link: then there will be mention of which link they want to click, that becomes the detected_keyword.
+
+If user mentions free_flow: then the action that needs to be performed will become the detected_keyword.
 
 The output response will be of this format if there is only one request in the user message:
 command='computer_search', detected_keyword='what user wants to search for on the computer' or
@@ -106,3 +109,50 @@ Email Message Body: {message_body}
 
 def format_email_instruction(message_body, email_tone):
     return email_instruction.format(message_body=message_body, email_tone=email_tone)
+
+def parse_user_input(user_input):
+   actions = ['computer_search', 'web_search', 'web_browse',
+              'web_shop', 'navigate_forward', 'navigate_back',
+              'summarize_links', 'click_link', 'scroll_up',
+              'scroll_down', 'scroll_top', 'scroll_bottom',
+              'new_tab', 'close_tab', 'minimize_window', 'close_window',
+              'find_dir_in_explorer', 'find_file_in_dir', 'images_on_screen',
+              'whats_on_screen', 'amazon_product_summary', 'submit_form',
+              'save_bookmark', 'open_previous_bookmark', 'compose_email',
+              'touch_up_email', 'attach_file_to_email', 'email_send', 'delete_promotional_n_socials',
+              'free_flow', 'clarify']
+
+   # Find the action in the user input
+   for action in actions:
+       pattern = r'\b' + action + r'\b'
+       match = re.search(pattern, user_input, re.IGNORECASE)
+       if match:
+           command = action
+           break
+   else:
+       command = None
+
+   # Find the detected keyword in the user input
+   if command in ['computer_search', 'web_search', 'web_shop', 'web_browse',
+                  'find_dir_in_explorer', 'find_file_in_dir', 'touch_up_email', 'open_previous_bookmark',
+                  'compose_email', 'attach_file_to_email', 'free_flow']:
+       detected_keyword = re.search(r'(?<=for )(.*)|(?<=they ).*', user_input, re.IGNORECASE)
+       if detected_keyword:
+           detected_keyword = detected_keyword.group().strip()
+       else:
+           detected_keyword = ''
+   elif command in ['find_dir_in_explorer', 'find_file_in_dir']:
+       root_directory = re.search(r'(?<=in )(.*)|(?<=they ).*', user_input, re.IGNORECASE)
+       if root_directory:
+           root_directory = root_directory.group().strip()
+       else:
+           root_directory = ''
+       detected_keyword = re.search(r'(?<=for )(.*)|(?<=they ).*', user_input, re.IGNORECASE)
+       if detected_keyword:
+           detected_keyword = detected_keyword.group().strip()
+       else:
+           detected_keyword = ''
+   else:
+       detected_keyword = ''
+
+   return f"command='{command}', detected_keyword='{detected_keyword}'"
