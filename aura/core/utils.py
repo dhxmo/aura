@@ -74,7 +74,6 @@ def image_capture_n_parse(screenshot_file_path, user_objective,
             free_flow_prompt = format_free_flow_prompt(screen_width=screen_width,
                                                     screen_height=screen_height,
                                                     user_action=user_objective)
-            print("free flow prompt", free_flow_prompt)
             return get_content_chat_completions(img_base64=img_base64, prompt=free_flow_prompt)
 
         # format vision prompt

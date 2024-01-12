@@ -37,6 +37,7 @@ def free_flow(user_action, driver):
     for pair in pairs:
         key, value = pair.split("=")
         intent_dict[key.strip()] = value.strip("'")
+    print("intent_dict", intent_dict)
     # intent_dict = {
     #     1:'Open Google Chrome',
     #     2:'Navigate to https://drive.google.com/',

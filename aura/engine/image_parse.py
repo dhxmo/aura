@@ -12,16 +12,17 @@ FREE_FLOW_PROMPT = """
 The current screen's width and height is {screen_width} and {screen_height} respectively. I need to find out steps needed
 to execute {user_action} from the current state given in the screenshot. 
 
-If any steps require the following actions, please use these keywords in the step's description:
-'web_search', 'web_browse', 'web_shop', 'navigate_forward', 'navigate_back', 'summarize_links', 'click_link', 
-'scroll_up', 'scroll_down', 'scroll_top', 'scroll_bottom', 'new_tab', 'close_tab', 'minimize_window', 'close_window', 
-'find_dir_in_explorer', 'find_file_in_dir', 'images_on_screen', 'whats_on_screen', 'amazon_product_summary', 
-'submit_form', 'save_bookmark', 'open_previous_bookmark', 'compose_email', 'touch_up_email', 'attach_file_to_email',
-'email_send', 'delete_promotional_n_socials'. If none of these actions are needed in the step, then explain the step 
+If any steps require the following actions, please use these keywords in the step's description: web search, 
+web browse,  web shop, navigate forward or back, summarize or click links, scroll up, down, top or bottom,
+new or close tab, minimize or close window, find file or directory in explorer, find the images on screen, 
+whats on screen, amazon product summary, submit form, save or open previous bookmark, compose, rewrite, attach file to 
+or send email, delete promotional and social emails. If none of these actions are needed in the step, then explain the step 
 as you must.
 
+Keep response short and to the point. 
 The output has to be in the format: "1='first step that would need to be taken to achieve user action',
  2='second step that would need to be taken', step3='third step that would need to be taken'"  
+Stick to the above output format absolutely.
 """
 
 COORDINATES_PROMPT = """"""
