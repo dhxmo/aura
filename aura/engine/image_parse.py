@@ -10,16 +10,9 @@ FREE_FLOW_PROMPT = """
 The current screen's width and height is {screen_width} and {screen_height} respectively. I need to find out steps needed
 to execute {user_action} from the current state given in the screenshot. 
 
-If any steps require the following actions, please use these keywords in the step's description: web search, 
-web browse,  web shop, navigate forward or back, summarize or click links, scroll up, down, top or bottom, 
-new or close tab, minimize or close window, find file or directory in explorer, find the images on screen, 
-whats on screen, amazon product summary, submit form, save or open previous bookmark, compose, rewrite, attach file 
-to or send email, delete promotional and social emails. If none of these actions are needed in the step, then explain 
-the step as you must.
-
-Keep response short and to the point. 
-The output has to be in the format: "1='first step that would need to be taken to achieve user action',
- 2='second step that would need to be taken', step3='third step that would need to be taken'"  
+Keep response short and to the point. Make each step an independent step. Do not group actions into a single step.
+The output has to be in the format: "1='first step that would need to be taken to achieve user action', 
+ 2='second step that would need to be taken', 3='third step that would need to be taken', 4=..., so on"  
 Stick to the above output format absolutely.
 """
 

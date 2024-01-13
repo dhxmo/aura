@@ -26,7 +26,7 @@ def init_app():
 
     root = tk.Tk()
     root.title('Aura')
-    root.geometry('1500x750')
+    root.geometry('1500x650')
 
     aura_title = "Welcome to Aura"
     title_label = tk.Label(root, text=aura_title, font=("Helvetica", 16))

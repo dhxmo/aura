@@ -12,7 +12,7 @@ class AuraSpeechRecognition:
     def __init__(self):
         self.active = False
         self.r = sr.Recognizer()
-        self.r.energy_threshold = 4000
+        self.r.energy_threshold = 3000
 
         self.ready_sound = 'ready.mp3'
         self.activate_voice_sound = 'start.mp3'
