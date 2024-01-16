@@ -11,18 +11,13 @@ from aura.core.db import init_db
 from aura.core.driver_session import set_session_storage, save_session_storage, get_chrome_user_data_dir
 from aura.core.speech_recognition import worker_speech_recognition
 
-
-# TODO: add fail case voice statements
-# TODO: add else statements play_sound to inform user what is missing
 # TODO: add a Aura server check. needs to be a paid user
 # TODO: check user. only allow one session per email
 # TODO: check for updates mechanism
+
 # TODO: if there any active Chrome sessions, close them
 # TODO write test for selenium element pick -> click_submit, email_actions
 # TODO: fix root_directory error in dir and file search
-# TODO: open a new tab then that becomes the active window. if closed, th app crashes. needs to refocus on the one open
-# TODO: amazon product summary -> no such element,
-# TODO: email related: if url not mail.google.com go to. bulk promo n social, click enter
 
 def init_app():
     user_id = init_db(Config.db_file)

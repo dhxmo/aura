@@ -52,8 +52,10 @@ def take_rolling_screenshot(driver, roll_down_steps, is_amazon=None):
             button.click()
         except NoSuchElementException:
             play_sound("No customer reviews were found on this page")
+            return
     else:
         play_sound("Please open amazon.com to run this action")
+        return
 
     for _ in range(roll_down_steps):
         # Take a screenshot
