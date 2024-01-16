@@ -19,7 +19,10 @@ from aura.core.speech_recognition import worker_speech_recognition
 # TODO: check for updates mechanism
 # TODO: if there any active Chrome sessions, close them
 # TODO write test for selenium element pick -> click_submit, email_actions
-
+# TODO: fix root_directory error in dir and file search
+# TODO: open a new tab then that becomes the active window. if closed, th app crashes. needs to refocus on the one open
+# TODO: amazon product summary -> no such element,
+# TODO: email related: if url not mail.google.com go to. bulk promo n social, click enter
 
 def init_app():
     user_id = init_db(Config.db_file)
@@ -49,15 +52,11 @@ def init_app():
     To search on Google, say "search for mountains on the web"
     To browse to a specific site, say "browse to google.com"
     To shop for something on amazon, say "shop for headphones"
-    To scroll down a page on chrome, say "scroll down on Chrome"
-    To open new tab or close current tab, say "open new tab on the browser"
-    To minimize or close browser window, say "close/minimize browser window"
     To find out links on the page, say "what are the links on this webpage?"
     To click on a specific link like lets say an article from BuzzFeed, say "click on the BuzzFeed link"  
     To get a summary of the amazon product on the browser, say "please summarize the amazon product 
     on the page for me"
     To submit a form, say "Submit this form"
-    To bookmark a page, say "Bookmark this page"
     To open a previously bookmarked page, say "Open the bookmark I have for BuzzFeed blog post about Keto diet" 
     To compose a Gmail message, say "Compose an email"
     To rewrite the mail you've composed, say "Touch up this email in a professional tone"  

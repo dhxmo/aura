@@ -117,7 +117,8 @@ def clean_up_intent(intent):
 
     # Replace the original detected_keyword with the modified one
     intent = intent[:start] + detected_keyword + intent[end:]
-    print("intent", intent)
 
     intent_list = intent.split(",")
-    return {elem.split("=")[0].strip(): elem.split("=")[1].strip("'") for elem in intent_list}
+    intent_dict = {elem.split("=")[0].strip(): elem.split("=")[1].strip("'") for elem in intent_list}
+
+    return intent_dict
