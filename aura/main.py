@@ -12,7 +12,7 @@ from aura.core.driver_session import set_session_storage, save_session_storage, 
 from aura.core.speech_recognition import worker_speech_recognition
 
 
-# TODO: add fail case return statements
+# TODO: add fail case voice statements
 # TODO: add else statements play_sound to inform user what is missing
 # TODO: add a Aura server check. needs to be a paid user
 # TODO: check user. only allow one session per email

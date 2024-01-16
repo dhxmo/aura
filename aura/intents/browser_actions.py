@@ -5,6 +5,8 @@ import pygetwindow as gw
 from selenium.common.exceptions import NoSuchWindowException, NoSuchElementException
 from selenium.webdriver.common.by import By
 
+from aura.core.utils import play_sound
+
 
 def browser_actions(driver, detected_keyword, flag):
     if flag == 'web_search':
@@ -15,55 +17,7 @@ def browser_actions(driver, detected_keyword, flag):
         url = f"https://www.amazon.com/s?k={detected_keyword}"
 
     driver.get(url)
-
-
-def navigate(driver, navigation_type):
-    if driver:
-        driver_in_focus(driver)
-
-        if navigation_type == 'back':
-            driver.back()
-        elif navigation_type == 'forward':
-            driver.forward()
-
-        return
-
-
-def scroll(driver, scroll_type):
-    if driver:
-        driver_in_focus(driver)
-
-        try:
-            if scroll_type == 'up':
-                driver.execute_script("window.scrollBy(0, -250)")
-            elif scroll_type == 'down':
-                driver.execute_script("window.scrollBy(0, 250)")
-            elif scroll_type == 'top':
-                driver.execute_script("window.scrollTo(0, 0)")
-            elif scroll_type == 'bottom':
-                driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
-        except NoSuchWindowException:
-            print("Window is no longer available.")
-
-        return
-
-
-def tab(driver, action_type):
-    if driver:
-        driver_in_focus(driver)
-
-        if action_type == 'new':
-            driver.execute_script("window.open('');")
-
-            # Get a list of all window handles
-            all_handles = driver.window_handles
-
-            # Switch to the last handle (which should be the new tab)
-            driver.switch_to.window(all_handles[-1])
-        elif action_type == 'close':
-            driver.execute_script("window.close();")
-
-        return
+    return
 
 
 def window(driver, action_type):
@@ -93,64 +47,9 @@ def window(driver, action_type):
                 print("Window does not exist.")
 
         return
-
-
-def click_submit(driver):
-    if driver:
-        driver_in_focus(driver)
-        try:
-            button = driver.find_element(By.CSS_SELECTOR, 'input[type="submit"]')
-            button.click()
-        except NoSuchElementException:
-            print("no such element found")
+    else:
+        play_sound("Error in driver. Please restart the app.")
         return
-
-
-def save_bookmark(driver):
-    if driver:
-        driver_in_focus(driver)
-
-        # Press Ctrl + D to bookmark the page
-        pyautogui.hotkey('ctrl', 'd')
-
-        time.sleep(0.4)
-
-        # Press Enter to confirm the bookmark
-        pyautogui.press('enter')
-
-        return
-
-
-def open_bookmark(driver, keyword):
-    if driver:
-        driver_in_focus(driver)
-
-        # Navigate to the bookmarks page
-        driver.get('chrome://bookmarks')
-
-        try:
-            time.sleep(1)
-
-            # Press Tab four times
-            pyautogui.press('tab', presses=2, interval=0.1)
-
-            # Type the keyword into the search bar
-            pyautogui.write(keyword, interval=0.1)
-
-            time.sleep(1)
-
-            # Press Tab four times
-            pyautogui.press('tab', presses=4, interval=0.1)
-
-            time.sleep(1)
-
-            # Press Enter to submit the form
-            pyautogui.press('space')
-            pyautogui.press('enter')
-
-        except NoSuchElementException:
-            print("No such element found")
-
 
 def driver_in_focus(driver):
     try:
@@ -168,10 +67,130 @@ def driver_in_focus(driver):
         if windows:
             current_window = windows[0]
 
-            # If the currently active window is not the window with the current title, activate it
             if active_window != current_window:
                 current_window.activate()
 
-        time.sleep(1)
+        time.sleep(0.2)
+        return
     except gw.PyGetWindowException:
-        print("error code: 0 - Operation completed successfully")
+        play_sound("There was an error. Please restart the app.")
+
+
+def navigate(driver, navigation_type):
+    if driver:
+        driver_in_focus(driver)
+
+        if navigation_type == 'back':
+            driver.back()
+        elif navigation_type == 'forward':
+            driver.forward()
+
+        return
+    else:
+        play_sound("Error in driver. Please restart the app.")
+        return
+
+
+def click_submit(driver):
+    if driver:
+        driver_in_focus(driver)
+        try:
+            button = driver.find_element(By.CSS_SELECTOR, 'input[type="submit"]')
+            button.click()
+        except NoSuchElementException:
+            play_sound("No submit button was found on the current page")
+
+        return
+    else:
+        play_sound("Error in driver. Please restart the app.")
+        return
+
+
+def open_bookmark(driver, keyword):
+    if driver:
+        driver_in_focus(driver)
+
+        # Navigate to the bookmarks page
+        driver.get('chrome://bookmarks')
+
+        time.sleep(0.7)
+
+        # Press Tab four times to get to search bar
+        pyautogui.press('tab', presses=2, interval=0.1)
+
+        # Type the keyword into the search bar
+        pyautogui.write(keyword, interval=0.1)
+
+        time.sleep(0.3)
+
+        # Press Tab four times to get to the top bookmark
+        pyautogui.press('tab', presses=4, interval=0.1)
+
+        time.sleep(0.2)
+
+        # Press Enter to submit the form
+        pyautogui.press('space')
+        pyautogui.press('enter')
+
+        return
+    else:
+        play_sound("Error in driver. Please restart the app.")
+        return
+
+
+
+# def scroll(driver, scroll_type):
+#     if driver:
+#         driver_in_focus(driver)
+#
+#         try:
+#             if scroll_type == 'up':
+#                 driver.execute_script("window.scrollBy(0, -250)")
+#             elif scroll_type == 'down':
+#                 driver.execute_script("window.scrollBy(0, 250)")
+#             elif scroll_type == 'top':
+#                 driver.execute_script("window.scrollTo(0, 0)")
+#             elif scroll_type == 'bottom':
+#                 driver.execute_script("window.scrollTo(0, document.body.scrollHeight)")
+#         except NoSuchWindowException:
+#             print("Window is no longer available.")
+#
+#         return
+#     else:
+#         play_sound("Error in driver. Please restart the app.")
+#         return
+#
+# def tab(driver, action_type):
+#     if driver:
+#         driver_in_focus(driver)
+#
+#         if action_type == 'new':
+#             driver.execute_script("window.open('');")
+#
+#             # Get a list of all window handles
+#             all_handles = driver.window_handles
+#
+#             # Switch to the last handle (which should be the new tab)
+#             driver.switch_to.window(all_handles[-1])
+#         elif action_type == 'close':
+#             driver.execute_script("window.close();")
+#
+#         return
+#
+#
+# def save_bookmark(driver):
+#     if driver:
+#         driver_in_focus(driver)
+#
+#         # Press Ctrl + D to bookmark the page
+#         pyautogui.hotkey('ctrl', 'd')
+#
+#         time.sleep(0.4)
+#
+#         # Press Enter to confirm the bookmark
+#         pyautogui.press('enter')
+#
+#         return
+#     else:
+#         play_sound("Error in driver. Please restart the app.")
+#         return

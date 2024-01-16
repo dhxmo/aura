@@ -7,28 +7,30 @@ import pyttsx3
 from PIL import Image
 from playsound import playsound
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 
-from aura.engine.image_parse import format_vision_prompt, get_content_chat_completions, format_free_flow_prompt
+from aura.engine.image_parse import format_vision_prompt, get_content_chat_completions
 
 
 def play_sound(filename):
     current_dir = os.getcwd()
     file_path = os.path.join(current_dir, 'aura', 'assets', 'audio', filename)
     playsound(file_path)
+    return
 
 
-# Function to check if the WebDriver is in focus
-def is_driver_in_focus(driver):
-    # Save the initial active element
-    initial_active_element = driver.switch_to.active_element
-
-    return initial_active_element == driver.switch_to.active_element
-
-
-# Function to maximize the window if the WebDriver is not in focus
-def maximize_window_if_not_in_focus(driver):
-    if not is_driver_in_focus(driver):
-        driver.maximize_window()
+# # Function to check if the WebDriver is in focus
+# def is_driver_in_focus(driver):
+#     # Save the initial active element
+#     initial_active_element = driver.switch_to.active_element
+#
+#     return initial_active_element == driver.switch_to.active_element
+#
+#
+# # Function to maximize the window if the WebDriver is not in focus
+# def maximize_window_if_not_in_focus(driver):
+#     if not is_driver_in_focus(driver):
+#         driver.maximize_window()
 
 
 def take_rolling_screenshot(driver, roll_down_steps, is_amazon=None):
@@ -37,13 +39,21 @@ def take_rolling_screenshot(driver, roll_down_steps, is_amazon=None):
     # Take screenshots and stitch them together
     screenshots = []
 
-    if is_amazon:
+    # Get the current URL
+    current_url = driver.current_url
+
+    if is_amazon and 'https://www.amazon.com/' in current_url:
         # Take a screenshot of the product
         screenshot = driver.get_screenshot_as_png()
         screenshots.append(Image.open(io.BytesIO(screenshot)))
-        # go to customer reviews
-        button = driver.find_element(By.ID, 'acrCustomerReviewLink')
-        button.click()
+        try:
+            # go to customer reviews
+            button = driver.find_element(By.ID, 'acrCustomerReviewLink')
+            button.click()
+        except NoSuchElementException:
+            play_sound("No customer reviews were found on this page")
+    else:
+        play_sound("Please open amazon.com to run this action")
 
     for _ in range(roll_down_steps):
         # Take a screenshot
@@ -64,19 +74,10 @@ def take_rolling_screenshot(driver, roll_down_steps, is_amazon=None):
     return screenshot_file_path
 
 
-def image_capture_n_parse(screenshot_file_path, user_objective,
-                          is_free_flow=False, screen_width=None, screen_height=None):
+def image_capture_n_parse(screenshot_file_path, user_objective):
     # convert image to base64
     with open(screenshot_file_path, "rb") as img_file:
         img_base64 = base64.b64encode(img_file.read()).decode("utf-8")
-
-        # get steps
-        if is_free_flow and screen_width and screen_height:
-            # format vision prompt
-            free_flow_prompt = format_free_flow_prompt(screen_width=screen_width,
-                                                       screen_height=screen_height,
-                                                       user_action=user_objective)
-            return get_content_chat_completions(img_base64=img_base64, prompt=free_flow_prompt)
 
         # format vision prompt
         vision_prompt = format_vision_prompt(user_objective=user_objective)
@@ -87,17 +88,20 @@ def image_capture_n_parse(screenshot_file_path, user_objective,
         # recite it out
         read_aloud(res)
 
+        return
 
 def read_aloud(res):
     engine = pyttsx3.init()
     engine.say(res)
     engine.runAndWait()
+    return
 
 
 def get_screenshot_file():
     # take current screenshot
     current_dir = os.getcwd()
     screenshot_file_path = os.path.join(current_dir, 'aura', 'assets', 'screenshots', 'screenshot.png')
+
     # Check if the file exists
     if not os.path.isfile(screenshot_file_path):
         # If the file does not exist, create it

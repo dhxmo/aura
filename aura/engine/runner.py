@@ -10,7 +10,6 @@ from aura.intents.on_screen import on_screen
 
 
 def runner(intent_dict, driver):
-    print("intent_dict", intent_dict)
     ready_sound = 'ready.mp3'
 
     match intent_dict['command']:
@@ -56,8 +55,6 @@ def runner(intent_dict, driver):
             attach_file_to_email(driver=driver)
         case 'email_send':
             email_send(driver)
-        case 'delete_promotional_n_socials':
-            delete_promotional_n_socials(driver)
         case 'clarify':
             clarify()
 

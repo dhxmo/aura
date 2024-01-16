@@ -4,11 +4,12 @@ import time
 from openai import OpenAI
 from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException
 from selenium.webdriver.common.by import By
+import pyautogui
 
 from aura.core.config import Config
 from aura.core.db import create_email_assistant_id
 from aura.core.openai_api import OpenAIAPIClient, fetch_thread_msgs
-from aura.core.utils import read_aloud
+from aura.core.utils import read_aloud, play_sound
 from aura.engine.parser import format_email_instruction
 from aura.intents.browser_actions import driver_in_focus
 
@@ -67,11 +68,10 @@ def compose_email(driver):
             try:
                 button = driver.find_element(By.CSS_SELECTOR, 'div.T-I.T-I-KE.L3[jscontroller="eIu7Db"]')
                 if button:
-                    # Click the button
                     button.click()
                     read_aloud("Cursor is on To. Type the email addresses you want to send the email to")
             except NoSuchElementException:
-                print("no such element found")
+                read_aloud("No new message button found")
         return
 
 
@@ -81,7 +81,6 @@ def touch_up_email(driver, tone):
 
         # Get the current URL
         current_url = driver.current_url
-        print("current url", current_url)
 
         # Check if the current URL is 'mail.google.com'
         if 'https://mail.google.com' in current_url:
@@ -96,70 +95,111 @@ def touch_up_email(driver, tone):
                 driver.execute_script("arguments[0].textContent = arguments[1];", element, new_email_content)
 
                 read_aloud(f"Touched up email is as follows: {new_email_content}")
-            except NoSuchElementException:
-                print("no such element found")
 
+                return
+            except NoSuchElementException:
+                read_aloud("Message Body not found")
+                return
+        else:
+            play_sound("Please open gmail to run this action")
+            return
+    else:
+        play_sound("Error in driver. Please restart the app.")
+        return
 
 def attach_file_to_email(driver):
     if driver:
         driver_in_focus(driver)
-        try:
-            file_input = driver.find_element(By.CSS_SELECTOR, '#\:6h')
-            file_input.click()
-        except NoSuchElementException:
-            print("no such element found")
+
+        current_url = driver.current_url
+        if 'https://mail.google.com' in current_url:
+            try:
+                file_input = driver.find_element(By.CSS_SELECTOR, '#\:6h')
+                file_input.click()
+            except NoSuchElementException:
+                play_sound("Attach file button not found")
+            return
+        else:
+            play_sound("Please open gmail to run this action")
+            return
+    else:
+        play_sound("Error in driver. Please restart the app.")
         return
 
 
 def email_send(driver):
     if driver:
         driver_in_focus(driver)
-        try:
-            send_btn = driver.find_element(By.CSS_SELECTOR, '#\:4k')
-            send_btn.click()
-        except NoSuchElementException:
-            print("no such element found")
+
+        current_url = driver.current_url
+        if 'https://mail.google.com' in current_url:
+            try:
+                send_btn = driver.find_element(By.CSS_SELECTOR, '#\:4k')
+                send_btn.click()
+            except NoSuchElementException:
+                play_sound("Email send button not found")
+            return
+        else:
+            play_sound("Please open gmail to run this action")
+            return
+    else:
+        play_sound("Error in driver. Please restart the app.")
         return
 
 
-def delete_promotional_n_socials(driver):
-    if driver:
-        driver_in_focus(driver)
-
-        promo_btn = driver.find_element(By.CSS_SELECTOR, '#\:1t')
-        social_btn = driver.find_element(By.CSS_SELECTOR, '#\:1u')
-
-        select_all_btn = driver.find_element(By.CSS_SELECTOR, '#\:1y > div.J-J5-Ji.J-JN-M-I-Jm > span')
-        delete_btn = driver.find_element(By.CSS_SELECTOR,
-                                         '#\:4 > div > div.nH.aqK > div.Cq.aqL > div > div > div:nth-child(2) > div.T-I.J-J5-Ji.nX.T-I-ax7.T-I-Js-Gs.mA > div')
-
-        promo_btn.click()
-        time.sleep(0.2)
-        select_all_btn.click()
-        time.sleep(0.3)
-        try:
-            # confirm google chrome browser css selector
-            promo_select_all_btn = driver.find_element(By.CSS_SELECTOR, '#\:1m6')
-            promo_select_all_btn.click()
-        except NoSuchElementException:
-            try:
-                delete_btn.click()
-            except ElementNotInteractableException:
-                print("no mails to delete")
-        time.sleep(1)
-
-        social_btn.click()
-        time.sleep(0.2)
-        select_all_btn.click()
-        time.sleep(0.3)
-        try:
-            # confirm google chrome browser css selector
-            social_select_all_btn = driver.find_element(By.CSS_SELECTOR, '#\:wi')
-            social_select_all_btn.click()
-        except NoSuchElementException:
-            try:
-                delete_btn.click()
-            except ElementNotInteractableException:
-                print("no mails to delete")
-
-        return
+# def delete_promotional_n_socials(driver):
+#     if driver:
+#         driver_in_focus(driver)
+#
+#         current_url = driver.current_url
+#         if 'https://mail.google.com' in current_url:
+#             try:
+#                 promo_btn = driver.find_element(By.CSS_SELECTOR, '#\:1t')
+#                 social_btn = driver.find_element(By.CSS_SELECTOR, '#\:1u')
+#
+#                 select_all_btn = driver.find_element(By.CSS_SELECTOR, '#\:1y > div.J-J5-Ji.J-JN-M-I-Jm > span')
+#                 delete_btn = driver.find_element(By.CSS_SELECTOR,
+#                                                  '#\:4 > div > div.nH.aqK > div.Cq.aqL > div > div > div:nth-child(2) > div.T-I.J-J5-Ji.nX.T-I-ax7.T-I-Js-Gs.mA > div')
+#             except NoSuchElementException:
+#                 play_sound("Promo and Social tabs weren't found")
+#                 return
+#
+#             # click promo btn and select all
+#             promo_btn.click()
+#             time.sleep(0.2)
+#             select_all_btn.click()
+#             time.sleep(0.3)
+#
+#             # see if all select all
+#             try:
+#                 promo_select_all_btn = driver.find_element(By.CSS_SELECTOR, '#\:1m6')
+#                 promo_select_all_btn.click()
+#             except NoSuchElementException:
+#                 try:
+#                     delete_btn.click()
+#                     pyautogui.press("enter")
+#                 except ElementNotInteractableException:
+#                     print("no mails to delete")
+#             time.sleep(1)
+#
+#             social_btn.click()
+#             time.sleep(0.2)
+#             select_all_btn.click()
+#             time.sleep(0.3)
+#             try:
+#                 # confirm google chrome browser css selector
+#                 social_select_all_btn = driver.find_element(By.CSS_SELECTOR, '#\:wi')
+#                 social_select_all_btn.click()
+#             except NoSuchElementException:
+#                 try:
+#                     delete_btn.click()
+#                 except ElementNotInteractableException:
+#                     print("no mails to delete")
+#
+#             return
+#         else:
+#             play_sound("Please open gmail to run this action")
+#             return
+#     else:
+#         play_sound("Error in driver. Please restart the app.")
+#         return
