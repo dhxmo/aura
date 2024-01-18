@@ -2,7 +2,7 @@ from fuzzywuzzy import process
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
-from aura.core.utils import maximize_window_if_not_in_focus, take_rolling_screenshot, image_capture_n_parse, play_sound
+from aura.core.utils import take_rolling_screenshot, image_capture_n_parse, play_sound
 from aura.intents.browser_actions import driver_in_focus
 
 

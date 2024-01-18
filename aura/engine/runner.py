@@ -4,8 +4,7 @@ from aura.intents.browser_links import summarize_links, click_link
 from aura.intents.clarify import clarify
 from aura.intents.computer_explorer import find_dir_in_explorer, find_file_powershell
 from aura.intents.computer_search import computer_search
-from aura.intents.email_actions import compose_email, touch_up_email, attach_file_to_email, email_send, \
-    delete_promotional_n_socials
+from aura.intents.email_actions import compose_email, touch_up_email, attach_file_to_email, email_send
 from aura.intents.on_screen import on_screen
 
 

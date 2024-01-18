@@ -19,6 +19,7 @@ from aura.core.speech_recognition import worker_speech_recognition
 # TODO write test for selenium element pick -> click_submit, email_actions
 # TODO: fix root_directory error in dir and file search
 
+
 def init_app():
     user_id = init_db(Config.db_file)
 
