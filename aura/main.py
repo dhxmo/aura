@@ -9,6 +9,7 @@ from selenium_stealth import stealth
 from aura.core.config import Config
 from aura.core.db import init_db
 from aura.core.driver_session import set_session_storage, save_session_storage, get_chrome_user_data_dir
+from aura.core.screen_read import worker_screen_reader
 from aura.core.speech_recognition import worker_speech_recognition
 
 # TODO: add a Aura server check. needs to be a paid user
@@ -109,6 +110,12 @@ def init_app():
     root.protocol("WM_DELETE_WINDOW", on_close)
 
     # Start the worker threads
+    start_worker_threads(driver)
+
+    root.mainloop()
+
+
+def start_worker_threads(driver):
     worker_speech_thread = threading.Thread(target=worker_speech_recognition, args=(driver,))
     worker_speech_thread.daemon = True
     worker_speech_thread.start()
@@ -121,4 +128,6 @@ def init_app():
     set_session_storage_thread.daemon = True
     set_session_storage_thread.start()
 
-    root.mainloop()
+    worker_screen_reader_thread = threading.Thread(target=worker_screen_reader, args=(driver,))
+    worker_screen_reader_thread.daemon = True
+    worker_screen_reader_thread.start()

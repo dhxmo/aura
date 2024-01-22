@@ -2,6 +2,8 @@ import base64
 import io
 import os
 import re
+import queue
+import time
 
 import pyttsx3
 from PIL import Image
@@ -92,11 +94,28 @@ def image_capture_n_parse(screenshot_file_path, user_objective):
 
         return
 
+# def read_aloud(res):
+#     print("running read aloud")
+#     engine = pyttsx3.init()
+#     # engine.setProperty('language', lang)
+#     engine.say(res)
+#     engine.runAndWait()
+#     engine.stop()
+#     return
+
+engine = pyttsx3.init()
+
 def read_aloud(res):
-    engine = pyttsx3.init()
+    # engine.setProperty('language', lang)
     engine.say(res)
     engine.runAndWait()
-    return
+    engine.stop()
+
+def kill_engine():
+    global engine
+    if engine is not None:
+        engine.stop()
+        return True
 
 
 def get_screenshot_file():
