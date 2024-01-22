@@ -116,18 +116,9 @@ def init_app():
 
 
 def start_worker_threads(driver):
-    worker_speech_thread = threading.Thread(target=worker_speech_recognition, args=(driver,))
-    worker_speech_thread.daemon = True
-    worker_speech_thread.start()
+    targets = [save_session_storage, set_session_storage, worker_speech_recognition, worker_screen_reader]
 
-    save_session_storage_thread = threading.Thread(target=save_session_storage, args=(driver,))
-    save_session_storage_thread.daemon = True
-    save_session_storage_thread.start()
-
-    set_session_storage_thread = threading.Thread(target=set_session_storage, args=(driver,))
-    set_session_storage_thread.daemon = True
-    set_session_storage_thread.start()
-
-    worker_screen_reader_thread = threading.Thread(target=worker_screen_reader, args=(driver,))
-    worker_screen_reader_thread.daemon = True
-    worker_screen_reader_thread.start()
+    for t in targets:
+        worker_thread = threading.Thread(target=t, args=(driver,))
+        worker_thread.daemon = True
+        worker_thread.start()
