@@ -25,7 +25,7 @@ class AuraSpeechRecognition:
             play_sound(self.ready_sound)
 
             while True:  # Continuously listen for speech
-                audio = self.r.record(source, offset=0, duration=7)
+                audio = self.r.record(source, offset=0, duration=4)
 
                 if audio:
                     try:

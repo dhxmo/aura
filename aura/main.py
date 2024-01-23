@@ -1,16 +1,20 @@
+import os
 import threading
 import tkinter as tk
-
 import requests
 from selenium import webdriver
 from selenium.common.exceptions import SessionNotCreatedException
 from selenium_stealth import stealth
+import win32security
+import ntsecuritycon as con
+import win32api
 
 from aura.core.config import Config
 from aura.core.db import init_db
 from aura.core.driver_session import set_session_storage, save_session_storage, get_chrome_user_data_dir
-from aura.core.screen_read import worker_screen_reader
 from aura.core.speech_recognition import worker_speech_recognition
+from aura.engine.tesseract_install import tesseract_install
+
 
 # TODO: add a Aura server check. needs to be a paid user
 # TODO: check user. only allow one session per email
@@ -24,6 +28,8 @@ from aura.core.speech_recognition import worker_speech_recognition
 def init_app():
     user_id = init_db(Config.db_file)
 
+    install_tesseract()
+
     root = tk.Tk()
     root.title('Aura')
     root.geometry('1500x650')
@@ -34,37 +40,39 @@ def init_app():
 
     aura_text = """
     When Aura is ready, you will hear a notification sound.
-    
+
     Say "Activate" to begin giving commands to Aura.
     Say "Deactivate" to deactivate Aura.
-    
+
     To do a search on your computer, say "search for Downloads on the computer"
-    To search for any folder on your system, say "search for Program Files on the computer" or 
+    To search for any folder on your system, say "search for Program Files on the computer" or
     "search for Test directory in D: drive"
-    To search for a file mention where the file is, say "search for untitled.txt in D drive in 
+    To search for a file mention where the file is, say "search for untitled.txt in D drive in
     Test sub directory"
     To find out what images are on the screen, say "what are the images on the screen right now?"
     To find out what is on the screen right now, say "whats on the screen right now?"
-    
+
     To search on Google, say "search for mountains on the web"
     To browse to a specific site, say "browse to google.com"
     To shop for something on amazon, say "shop for headphones"
     To find out links on the page, say "what are the links on this webpage?"
-    To click on a specific link like lets say an article from BuzzFeed, say "click on the BuzzFeed link"  
-    To get a summary of the amazon product on the browser, say "please summarize the amazon product 
+    To click on a specific link like lets say an article from BuzzFeed, say "click on the BuzzFeed link"
+    To get a summary of the amazon product on the browser, say "please summarize the amazon product
     on the page for me"
     To submit a form, say "Submit this form"
-    To open a previously bookmarked page, say "Open the bookmark I have for BuzzFeed blog post about Keto diet" 
+    To open a previously bookmarked page, say "Open the bookmark I have for BuzzFeed blog post about Keto diet"
     To compose a Gmail message, say "Compose an email"
-    To rewrite the mail you've composed, say "Touch up this email in a professional tone"  
+    To rewrite the mail you've composed, say "Touch up this email in a professional tone"
     To open the attach files in mail, say "Attach a file to this email"
     To send an email, say "Send this email"
-    If you have too much promotional junk and want to delete it all in one go, 
+    If you have too much promotional junk and want to delete it all in one go,
     just say "Delete all Promotional and Social mails"
-    
+
+    To read the pdf currently visible on the screen, say "Read the pdf on the screen right now".
+
     Pls Note: When the narration is going on, if a command is spoken, the narration will stop.
 
-    Aura understands everything you say, the above are just examples. Please feel free to experiment and find out 
+    Aura understands everything you say, the above are just examples. Please feel free to experiment and find out
     how to make Aura work for you in the bext wat possible.
     """
 
@@ -116,9 +124,23 @@ def init_app():
 
 
 def start_worker_threads(driver):
-    targets = [save_session_storage, set_session_storage, worker_speech_recognition, worker_screen_reader]
+    targets = [save_session_storage, set_session_storage, worker_speech_recognition]
 
     for t in targets:
         worker_thread = threading.Thread(target=t, args=(driver,))
         worker_thread.daemon = True
         worker_thread.start()
+
+
+def install_tesseract():
+    # Define the path to the Tesseract directory
+    tesseract_dir = 'C:\\Program Files\\Tesseract-OCR'
+
+    # Check if the Tesseract directory exists
+    if not os.path.isdir(tesseract_dir):
+        # If not, call the tesseract_install function
+        tesseract_install(tesseract_dir)
+    else:
+        print("Tesseract is already installed.")
+
+    return

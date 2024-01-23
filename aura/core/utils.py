@@ -106,7 +106,6 @@ def image_capture_n_parse(screenshot_file_path, user_objective):
 engine = pyttsx3.init()
 
 def read_aloud(res):
-    # engine.setProperty('language', lang)
     engine.say(res)
     engine.runAndWait()
     engine.stop()
