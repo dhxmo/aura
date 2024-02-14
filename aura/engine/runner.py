@@ -6,7 +6,7 @@ from aura.intents.computer_explorer import find_dir_in_explorer, find_file_power
 from aura.intents.computer_search import computer_search
 from aura.intents.email_actions import compose_email, touch_up_email, attach_file_to_email, email_send
 from aura.intents.on_screen import on_screen
-from aura.intents.pdf_read import read_the_pdf
+# from aura.intents.pdf_read import read_the_pdf
 
 
 def runner(intent_dict, driver):
@@ -55,8 +55,8 @@ def runner(intent_dict, driver):
             attach_file_to_email(driver=driver)
         case 'email_send':
             email_send(driver)
-        case 'read_the_pdf':
-            read_the_pdf()
+        # case 'read_the_pdf':
+        #     read_the_pdf()
         case 'clarify':
             clarify()
 

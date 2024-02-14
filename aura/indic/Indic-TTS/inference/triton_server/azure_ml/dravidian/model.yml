@@ -1,5 +1,0 @@
-$schema: https://azuremlschemas.azureedge.net/latest/model.schema.json
-name: indic-tts--coqui-models--dravidian
-version: 1
-path: ../../../models/dravidian/checkpoints
-type: triton_model

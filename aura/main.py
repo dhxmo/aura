@@ -1,13 +1,11 @@
 import os
 import threading
 import tkinter as tk
+
 import requests
 from selenium import webdriver
 from selenium.common.exceptions import SessionNotCreatedException
 from selenium_stealth import stealth
-import win32security
-import ntsecuritycon as con
-import win32api
 
 from aura.core.config import Config
 from aura.core.db import init_db
@@ -28,7 +26,8 @@ from aura.engine.tesseract_install import tesseract_install
 def init_app():
     user_id = init_db(Config.db_file)
 
-    install_tesseract()
+    # TODO: uncomment if tesseract needed in functionalities
+    # install_tesseract()
 
     root = tk.Tk()
     root.title('Aura')
