@@ -116,6 +116,7 @@ def attach_file_to_email(driver):
             try:
                 file_input = driver.find_element(By.CSS_SELECTOR, '#\:6h')
                 file_input.click()
+                play_sound("Navigate explorer to attach file to gmail")
             except NoSuchElementException:
                 play_sound("Attach file button not found")
             return
@@ -136,6 +137,7 @@ def email_send(driver):
             try:
                 send_btn = driver.find_element(By.CSS_SELECTOR, '#\:4k')
                 send_btn.click()
+                play_sound("Message sent")
             except NoSuchElementException:
                 play_sound("Email send button not found")
             return

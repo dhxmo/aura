@@ -13,10 +13,13 @@ def browser_actions(driver, detected_keyword, flag):
 
     if flag == 'web_search':
         url = f"https://www.google.com/search?q={detected_keyword}"
+        play_sound("Web search complete for {}".format(detected_keyword))
     elif flag == 'web_browse':
         url = detected_keyword
+        play_sound("Web browse complete for {}".format(detected_keyword))
     elif flag == 'web_shop':
         url = f"https://www.amazon.com/s?k={detected_keyword}"
+        play_sound("Amazon search for {} complete".format(detected_keyword))
 
     driver.get(url)
     return
@@ -84,8 +87,10 @@ def navigate(driver, navigation_type):
 
         if navigation_type == 'back':
             driver.back()
+            play_sound("Navigate back complete")
         elif navigation_type == 'forward':
             driver.forward()
+            play_sound("Navigate forward complete")
 
         return
     else:
@@ -99,6 +104,7 @@ def click_submit(driver):
         try:
             button = driver.find_element(By.CSS_SELECTOR, 'input[type="submit"]')
             button.click()
+            play_sound("Submit button click complete")
         except NoSuchElementException:
             play_sound("No submit button was found on the current page")
 
@@ -133,6 +139,8 @@ def open_bookmark(driver, keyword):
         # Press Enter to submit the form
         pyautogui.press('space')
         pyautogui.press('enter')
+
+        play_sound("Open bookmark {} complete".format(keyword))
 
         return
     else:

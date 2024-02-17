@@ -37,6 +37,7 @@ def click_link(driver, link_keyword):
         # Click the link with the best match
         driver.get(next(key for key, value in all_links.items() if value == best_match[0]))
 
+        play_sound("Link click complete for {}".format(link_keyword))
         return
     except NoSuchElementException:
         play_sound("No hyperlinks were found on this page")
