@@ -2,7 +2,7 @@ from fuzzywuzzy import process
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
-from aura.core.utils import take_rolling_screenshot, image_capture_n_parse, play_sound
+from aura.core.utils import take_rolling_screenshot, image_capture_n_parse, play_sound, read_aloud
 from aura.intents.browser_actions import driver_in_focus
 
 
@@ -37,7 +37,7 @@ def click_link(driver, link_keyword):
         # Click the link with the best match
         driver.get(next(key for key, value in all_links.items() if value == best_match[0]))
 
-        play_sound("Link click complete for {}".format(link_keyword))
+        read_aloud("Link click complete for {}".format(link_keyword))
         return
     except NoSuchElementException:
-        play_sound("No hyperlinks were found on this page")
+        read_aloud("No hyperlinks were found on this page")

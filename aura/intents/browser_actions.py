@@ -5,7 +5,7 @@ import pygetwindow as gw
 from selenium.common.exceptions import NoSuchWindowException, NoSuchElementException
 from selenium.webdriver.common.by import By
 
-from aura.core.utils import play_sound
+from aura.core.utils import read_aloud, read_aloud
 
 
 def browser_actions(driver, detected_keyword, flag):
@@ -13,15 +13,16 @@ def browser_actions(driver, detected_keyword, flag):
 
     if flag == 'web_search':
         url = f"https://www.google.com/search?q={detected_keyword}"
-        play_sound("Web search complete for {}".format(detected_keyword))
+        play_res = "Web search complete for {}".format(detected_keyword)
     elif flag == 'web_browse':
         url = detected_keyword
-        play_sound("Web browse complete for {}".format(detected_keyword))
+        play_res = "Web browse complete for {}".format(detected_keyword)
     elif flag == 'web_shop':
         url = f"https://www.amazon.com/s?k={detected_keyword}"
-        play_sound("Amazon search for {} complete".format(detected_keyword))
+        play_res = "Amazon search for {} complete".format(detected_keyword)
 
     driver.get(url)
+    read_aloud(play_res)
     return
 
 
@@ -53,7 +54,7 @@ def window(driver, action_type):
 
         return
     else:
-        play_sound("Error in driver. Please restart the app.")
+        read_aloud("Error in driver. Please restart the app.")
         return
 
 def driver_in_focus(driver):
@@ -78,7 +79,7 @@ def driver_in_focus(driver):
         time.sleep(0.2)
         return
     except gw.PyGetWindowException:
-        play_sound("There was an error. Please restart the app.")
+        read_aloud("There was an error. Please restart the app.")
 
 
 def navigate(driver, navigation_type):
@@ -87,14 +88,14 @@ def navigate(driver, navigation_type):
 
         if navigation_type == 'back':
             driver.back()
-            play_sound("Navigate back complete")
+            read_aloud("Navigate back complete")
         elif navigation_type == 'forward':
             driver.forward()
-            play_sound("Navigate forward complete")
+            read_aloud("Navigate forward complete")
 
         return
     else:
-        play_sound("Error in driver. Please restart the app.")
+        read_aloud("Error in driver. Please restart the app.")
         return
 
 
@@ -104,13 +105,13 @@ def click_submit(driver):
         try:
             button = driver.find_element(By.CSS_SELECTOR, 'input[type="submit"]')
             button.click()
-            play_sound("Submit button click complete")
+            read_aloud("Submit button click complete")
         except NoSuchElementException:
-            play_sound("No submit button was found on the current page")
+            read_aloud("No submit button was found on the current page")
 
         return
     else:
-        play_sound("Error in driver. Please restart the app.")
+        read_aloud("Error in driver. Please restart the app.")
         return
 
 
@@ -140,11 +141,11 @@ def open_bookmark(driver, keyword):
         pyautogui.press('space')
         pyautogui.press('enter')
 
-        play_sound("Open bookmark {} complete".format(keyword))
+        read_aloud("Open bookmark {} complete".format(keyword))
 
         return
     else:
-        play_sound("Error in driver. Please restart the app.")
+        read_aloud("Error in driver. Please restart the app.")
         return
 
 
@@ -167,7 +168,7 @@ def open_bookmark(driver, keyword):
 #
 #         return
 #     else:
-#         play_sound("Error in driver. Please restart the app.")
+#         read_aloud("Error in driver. Please restart the app.")
 #         return
 #
 # def tab(driver, action_type):
@@ -202,5 +203,5 @@ def open_bookmark(driver, keyword):
 #
 #         return
 #     else:
-#         play_sound("Error in driver. Please restart the app.")
+#         read_aloud("Error in driver. Please restart the app.")
 #         return

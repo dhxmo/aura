@@ -64,6 +64,7 @@ db.sqlite3-journal
 aura.db
 session_storage.json
 tessdata/
+sounds/
 
 # Flask stuff:
 instance/

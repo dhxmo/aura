@@ -9,7 +9,7 @@ import pyautogui
 from aura.core.config import Config
 from aura.core.db import create_email_assistant_id
 from aura.core.openai_api import OpenAIAPIClient, fetch_thread_msgs
-from aura.core.utils import read_aloud, play_sound
+from aura.core.utils import read_aloud
 from aura.engine.parser import format_email_instruction
 from aura.intents.browser_actions import driver_in_focus
 
@@ -101,10 +101,10 @@ def touch_up_email(driver, tone):
                 read_aloud("Message Body not found")
                 return
         else:
-            play_sound("Please open gmail to run this action")
+            read_aloud("Please open gmail to run this action")
             return
     else:
-        play_sound("Error in driver. Please restart the app.")
+        read_aloud("Error in driver. Please restart the app.")
         return
 
 def attach_file_to_email(driver):
@@ -116,15 +116,15 @@ def attach_file_to_email(driver):
             try:
                 file_input = driver.find_element(By.CSS_SELECTOR, '#\:6h')
                 file_input.click()
-                play_sound("Navigate explorer to attach file to gmail")
+                read_aloud("Navigate explorer to attach file to gmail")
             except NoSuchElementException:
-                play_sound("Attach file button not found")
+                read_aloud("Attach file button not found")
             return
         else:
-            play_sound("Please open gmail to run this action")
+            read_aloud("Please open gmail to run this action")
             return
     else:
-        play_sound("Error in driver. Please restart the app.")
+        read_aloud("Error in driver. Please restart the app.")
         return
 
 
@@ -137,15 +137,15 @@ def email_send(driver):
             try:
                 send_btn = driver.find_element(By.CSS_SELECTOR, '#\:4k')
                 send_btn.click()
-                play_sound("Message sent")
+                read_aloud("Message sent")
             except NoSuchElementException:
-                play_sound("Email send button not found")
+                read_aloud("Email send button not found")
             return
         else:
-            play_sound("Please open gmail to run this action")
+            read_aloud("Please open gmail to run this action")
             return
     else:
-        play_sound("Error in driver. Please restart the app.")
+        read_aloud("Error in driver. Please restart the app.")
         return
 
 
@@ -163,7 +163,7 @@ def email_send(driver):
 #                 delete_btn = driver.find_element(By.CSS_SELECTOR,
 #                                                  '#\:4 > div > div.nH.aqK > div.Cq.aqL > div > div > div:nth-child(2) > div.T-I.J-J5-Ji.nX.T-I-ax7.T-I-Js-Gs.mA > div')
 #             except NoSuchElementException:
-#                 play_sound("Promo and Social tabs weren't found")
+#                 read_aloud("Promo and Social tabs weren't found")
 #                 return
 #
 #             # click promo btn and select all
@@ -200,8 +200,8 @@ def email_send(driver):
 #
 #             return
 #         else:
-#             play_sound("Please open gmail to run this action")
+#             read_aloud("Please open gmail to run this action")
 #             return
 #     else:
-#         play_sound("Error in driver. Please restart the app.")
+#         read_aloud("Error in driver. Please restart the app.")
 #         return

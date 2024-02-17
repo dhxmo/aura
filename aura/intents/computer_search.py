@@ -3,7 +3,7 @@ import time
 
 import pyautogui
 
-from aura.core.utils import play_sound
+from aura.core.utils import play_sound, read_aloud
 
 
 def computer_search(detected_keyword):
@@ -18,4 +18,4 @@ def computer_search(detected_keyword):
 
         pyautogui.press("enter")
 
-        play_sound("Search complete for {}".format(detected_keyword))
+        read_aloud("Search complete for {}".format(detected_keyword))
