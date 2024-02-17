@@ -9,6 +9,8 @@ from aura.core.utils import play_sound
 
 
 def browser_actions(driver, detected_keyword, flag):
+    driver_in_focus(driver)
+
     if flag == 'web_search':
         url = f"https://www.google.com/search?q={detected_keyword}"
     elif flag == 'web_browse':

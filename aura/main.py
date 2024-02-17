@@ -67,8 +67,6 @@ def init_app():
     If you have too much promotional junk and want to delete it all in one go,
     just say "Delete all Promotional and Social mails"
 
-    To read the pdf currently visible on the screen, say "Read the pdf on the screen right now".
-
     Pls Note: When the narration is going on, if a command is spoken, the narration will stop.
 
     Aura understands everything you say, the above are just examples. Please feel free to experiment and find out
